@@ -13,6 +13,8 @@ class Dice;
 class GameBoard
 {
 private:
+	Dice* dice[GAMEBOARDSIZE];
+private:
 	RECT rcTest[GAMEBOARDSIZE];
 	
 	RECT rcCircle1;

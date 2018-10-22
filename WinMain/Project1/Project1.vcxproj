@@ -145,6 +145,7 @@
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="BackBuffer.cpp" />
+    <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CollisionFunction.cpp" />
@@ -177,6 +178,7 @@
   <ItemGroup>
     <ClInclude Include="Animation.h" />
     <ClInclude Include="BackBuffer.h" />
+    <ClInclude Include="Bullet.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CollisionFunction.h" />

@@ -76,6 +76,9 @@
     <Filter Include="MainGame\02.Object\GameBoard">
       <UniqueIdentifier>{67b41e55-efb4-4271-91f3-17c5c3d73b7e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MainGame\02.Object\Dice\Bullet">
+      <UniqueIdentifier>{570a1044-db24-46a4-9bff-e41cffe80b3c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinMain.cpp">
@@ -167,6 +170,9 @@
     </ClCompile>
     <ClCompile Include="GameBoard.cpp">
       <Filter>MainGame\02.Object\GameBoard</Filter>
+    </ClCompile>
+    <ClCompile Include="Bullet.cpp">
+      <Filter>MainGame\02.Object\Dice\Bullet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -274,6 +280,9 @@
     </ClInclude>
     <ClInclude Include="commonMacroFunction.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Bullet.h">
+      <Filter>MainGame\02.Object\Dice\Bullet</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

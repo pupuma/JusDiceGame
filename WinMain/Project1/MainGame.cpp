@@ -22,6 +22,7 @@ bool MainGame::Init()
 	IMAGEMANAGER->AddImage(TEXT("BackLoading"), TEXT("../Resource/SpaceShip/hpBarBottom.bmp"), 0, WINSIZEY - 20,
 		WINSIZEX, 20, true, COLOR_M);
 
+	IMAGEMANAGER->AddFrameImage(TEXT("TestDice"), TEXT("../../Resource/BMP/DiceOff.bmp"), 438, 62, 6, 1, true, COLOR_M);
 
 	//// SCENE
 	//SCENEMANAGER->AddScene(TEXT("Start"), new StartScene());

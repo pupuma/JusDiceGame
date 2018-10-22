@@ -22,7 +22,7 @@ bool GameBoard::Init()
 		//iDiceStartX = 113;
 		//iDiceStartY = 207;
 		
-		iDiceStartX = 150;
+		iDiceStartX = 148;
 		iDiceStartY = 237;
 
 		iDiceWidth = 73;
@@ -34,10 +34,16 @@ bool GameBoard::Init()
 		int temp = 0;
 		for (int i = 0; i < GAMEBOARDX; i++)
 		{
-			for (int j = 0; j < GAMEBOARDX; j++)
+			for (int j = 0; j < GAMEBOARDY; j++)
 			{
 				rcTest[temp] = RectMakeCenter(x, y, iDiceWidth, iDiceHeight);
-				x =  x + iDiceWidth + 2;
+				dice[temp] = new Dice();
+				if (!(dice[temp]->Init(x, y)))
+				{
+					return false;
+				}
+				x = x + iDiceWidth + 2;
+
 				temp++;
 			}
 			x = iDiceStartX;
@@ -56,6 +62,7 @@ bool GameBoard::Init()
 		int circleX1 = startX + iDiceWidth / 2; 
 		int circleY1 = startY + iDiceHeight / 2;
 		rcCircle1 = RectMakeCenter(circleX1, circleY1, 14, 12);
+
 
 		// Level 2 
 		int circleX2 = startX + iDiceWidth / 3; 
@@ -151,6 +158,8 @@ bool GameBoard::Init()
 		{
 			return false;
 		}
+
+		
 	}
 
 	return true;
@@ -226,6 +235,11 @@ void GameBoard::Render(HDC hdc)
 
 	{
 		testDice->Render(hdc);
+
+		for (int i = 0; i < GAMEBOARDSIZE; i++)
+		{	
+			dice[i]->Render(hdc);
+		}
 	}
 
 }
