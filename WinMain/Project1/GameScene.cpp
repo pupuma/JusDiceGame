@@ -35,6 +35,11 @@ bool GameScene::Init()
 			return false; 
 		}
 	}
+
+	{
+		GAMESYS->SetRound(3);
+		GAMESYS->AddEnemy();
+	}
 	return true;
 }
 
@@ -44,6 +49,7 @@ void GameScene::Release()
 
 void GameScene::Update()
 {
+	gameBoard->Update();
 }
 
 void GameScene::Render(HDC hdc)
@@ -60,7 +66,7 @@ void GameScene::Render(HDC hdc)
 	}
 	
 	{
-		DrawObject(hdc, testRect, 1, RGB(234, 57, 67), ROUNDRECT, 20, 20);
+		//DrawObject(hdc, testRect, 1, RGB(234, 57, 67), ROUNDRECT, 20, 20);
 	}
 	// 도형 그리기 
 	//RoundRect(hdc, testRect.left, testRect.top, testRect.right, testRect.bottom, 30, 30);

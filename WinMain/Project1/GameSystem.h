@@ -1,25 +1,22 @@
 #pragma once
 
-#include "SingletonBase.h"
-
-class Monster;
-class Player;
+class Bullet;
+class Enemy;
 
 class GameSystem
 	: public SingletonBase<GameSystem>
 {
-private:
-	Monster* _monster;
-	Player* _player;
+public:
+	int iRound;
+	std::list<Enemy*> enemyList;
 public:
 	GameSystem();
 	~GameSystem();
 public:
-	void SetMonster(Monster* monster);
-	void CrashCharacter(Player* player);
-
-	void SetMousePosition(LPARAM lParam);
-	POINT GetMousePosition();
-
+	void CollisionBullet(Bullet* _bullet, const RECT _target);
+	void AddEnemy();
+public:
+	void SetRound(int _round) { iRound = _round; }
+	int GetRound() { return iRound; }
 };
 

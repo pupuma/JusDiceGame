@@ -61,22 +61,19 @@
     <Filter Include="2DFrameWork\Effect">
       <UniqueIdentifier>{fd1e435a-d8e8-4a72-a84d-5e593e0da35a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="MainGame\02.Object\Character\SpaceShip">
-      <UniqueIdentifier>{e30e4282-9528-415b-aea3-fa7e653ca103}</UniqueIdentifier>
-    </Filter>
     <Filter Include="2DFrameWork\ProgressBar">
       <UniqueIdentifier>{6f101f6e-1c55-4c06-83ab-3abaf0e79878}</UniqueIdentifier>
     </Filter>
     <Filter Include="2DFrameWork\Button">
       <UniqueIdentifier>{8de1bcc0-3703-454b-b785-3827802e8548}</UniqueIdentifier>
     </Filter>
-    <Filter Include="MainGame\02.Object\Dice">
-      <UniqueIdentifier>{aafd5c69-2566-4f8a-82fa-8dbd762254fc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="MainGame\02.Object\GameBoard">
       <UniqueIdentifier>{67b41e55-efb4-4271-91f3-17c5c3d73b7e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="MainGame\02.Object\Dice\Bullet">
+    <Filter Include="MainGame\02.Object\Character\Dice">
+      <UniqueIdentifier>{aafd5c69-2566-4f8a-82fa-8dbd762254fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MainGame\02.Object\Character\Bullet">
       <UniqueIdentifier>{570a1044-db24-46a4-9bff-e41cffe80b3c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -98,15 +95,6 @@
     </ClCompile>
     <ClCompile Include="Image.cpp">
       <Filter>2DFrameWork\Image</Filter>
-    </ClCompile>
-    <ClCompile Include="Monster.cpp">
-      <Filter>MainGame\02.Object\Character</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>MainGame\02.Object\Character</Filter>
-    </ClCompile>
-    <ClCompile Include="GameSystem.cpp">
-      <Filter>2DFrameWork\System</Filter>
     </ClCompile>
     <ClCompile Include="Util.cpp">
       <Filter>2DFrameWork\Utill</Filter>
@@ -141,17 +129,8 @@
     <ClCompile Include="LoadingScene.cpp">
       <Filter>MainGame\01.Scene</Filter>
     </ClCompile>
-    <ClCompile Include="InGameScene.cpp">
-      <Filter>MainGame\01.Scene</Filter>
-    </ClCompile>
     <ClCompile Include="StartScene.cpp">
       <Filter>MainGame\01.Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="SpaceShip.cpp">
-      <Filter>MainGame\02.Object\Character\SpaceShip</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemy.cpp">
-      <Filter>MainGame\02.Object\Character\SpaceShip</Filter>
     </ClCompile>
     <ClCompile Include="ProgressBar.cpp">
       <Filter>2DFrameWork\ProgressBar</Filter>
@@ -165,14 +144,20 @@
     <ClCompile Include="GameScene.cpp">
       <Filter>MainGame\01.Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Dice.cpp">
-      <Filter>MainGame\02.Object\Dice</Filter>
-    </ClCompile>
     <ClCompile Include="GameBoard.cpp">
       <Filter>MainGame\02.Object\GameBoard</Filter>
     </ClCompile>
+    <ClCompile Include="Dice.cpp">
+      <Filter>MainGame\02.Object\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="GameSystem.cpp">
+      <Filter>2DFrameWork\System</Filter>
+    </ClCompile>
     <ClCompile Include="Bullet.cpp">
-      <Filter>MainGame\02.Object\Dice\Bullet</Filter>
+      <Filter>MainGame\02.Object\Character\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>MainGame\02.Object\Character</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -193,15 +178,6 @@
     </ClInclude>
     <ClInclude Include="Image.h">
       <Filter>2DFrameWork\Image</Filter>
-    </ClInclude>
-    <ClInclude Include="Monster.h">
-      <Filter>MainGame\02.Object\Character</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>MainGame\02.Object\Character</Filter>
-    </ClInclude>
-    <ClInclude Include="GameSystem.h">
-      <Filter>2DFrameWork\System</Filter>
     </ClInclude>
     <ClInclude Include="CollisionFunction.h">
       <Filter>2DFrameWork\Utill</Filter>
@@ -248,17 +224,8 @@
     <ClInclude Include="LoadingScene.h">
       <Filter>MainGame\01.Scene</Filter>
     </ClInclude>
-    <ClInclude Include="InGameScene.h">
-      <Filter>MainGame\01.Scene</Filter>
-    </ClInclude>
     <ClInclude Include="StartScene.h">
       <Filter>MainGame\01.Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="SpaceShip.h">
-      <Filter>MainGame\02.Object\Character\SpaceShip</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemy.h">
-      <Filter>MainGame\02.Object\Character\SpaceShip</Filter>
     </ClInclude>
     <ClInclude Include="ProgressBar.h">
       <Filter>2DFrameWork\ProgressBar</Filter>
@@ -272,17 +239,23 @@
     <ClInclude Include="GameScene.h">
       <Filter>MainGame\01.Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Dice.h">
-      <Filter>MainGame\02.Object\Dice</Filter>
-    </ClInclude>
     <ClInclude Include="GameBoard.h">
       <Filter>MainGame\02.Object\GameBoard</Filter>
     </ClInclude>
     <ClInclude Include="commonMacroFunction.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Dice.h">
+      <Filter>MainGame\02.Object\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="GameSystem.h">
+      <Filter>2DFrameWork\System</Filter>
+    </ClInclude>
     <ClInclude Include="Bullet.h">
-      <Filter>MainGame\02.Object\Dice\Bullet</Filter>
+      <Filter>MainGame\02.Object\Character\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>MainGame\02.Object\Character</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

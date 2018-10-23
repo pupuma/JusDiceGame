@@ -48,4 +48,5 @@
 #include "EffectManager.h"
 #include "SceneManager.h"
 #include "SoundManager.h"
+#include "GameSystem.h"
 

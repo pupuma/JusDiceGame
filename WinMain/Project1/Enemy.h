@@ -1,24 +1,21 @@
 #pragma once
+
+enum eEnemyType
+{
+	ENEMY_NONE,
+	ENEMY_BOSS,
+};
+
 class Enemy
 {
 private:
-	Image*		_enemy;
-	Animation*	_ani;
-	
-	RECT		_rc;
-	POINT		_pt;
-
-	int			speed;
-	float		angle;
-
+	RECT rcEnemy;
+	eEnemyType enemyType;
 public:
 	Enemy();
 	~Enemy();
 public:
-	bool Init();
-	void Release();
-	void Update();
-	void Render(HDC hdc);
-public:
+	void Init();
+
 };
 

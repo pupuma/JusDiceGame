@@ -1,9 +1,7 @@
 #include "Game.h"
 #include "GameSystem.h"
 
-#include "Player.h"	
-
-#include "Monster.h"
+#include "Bullet.h"
 
 
 GameSystem::GameSystem()
@@ -15,38 +13,33 @@ GameSystem::~GameSystem()
 {
 }
 
-
-void GameSystem::SetMonster(Monster* monster)
+void GameSystem::CollisionBullet(Bullet* _bullet, const RECT _target)
 {
-	_monster = monster;
-}
+	float fRadius = 7.0f;
+	float fPosX = _bullet->GetBulletCenterX();
+	float fPosY = _bullet->GetBulletCenterY();
 
-void GameSystem::CrashCharacter(Player* player)
-{
-	RECT rcPlayer = player->GetRectPlayer();
-	RECT rcMonster = _monster->GetRectMonster();
-	RECT rcTemp;
-	if (IntersectRect(&rcTemp, &rcPlayer, &rcMonster))
+	float fTargetPosX = _target.left + ((_target.right - _target.left) / 2);
+	float fTargetPosY = _target.top + ((_target.bottom - _target.top) / 2);
+
+
+	if (CollisionCircleAndPoint(fRadius, fPosX, fPosY, fTargetPosX, fTargetPosY))
 	{
-		if (rcPlayer.right <= rcMonster.left + (rcMonster.right - rcMonster.left) / 2)
-		{
-			player->CrashObject(0);
-		}
-		else
-		{
-			player->CrashObject(1);
-		}
+		_bullet->SetFire(false);
+		_bullet->ResetPosition();
 	}
 }
 
-void GameSystem::SetMousePosition(LPARAM lParam)
+void GameSystem::AddEnemy()
 {
-	_ptMouse.x = LOWORD(lParam);
-	_ptMouse.y = HIWORD(lParam);
-}
+	int round = GetRound();
 
-
-POINT GameSystem::GetMousePosition()
-{
-	return _ptMouse;
+	if ((round % 10) == 0)
+	{
+		// 보스 몬스터 생성 
+	}
+	else
+	{
+		// 일반 몬스터 생성 
+	}
 }

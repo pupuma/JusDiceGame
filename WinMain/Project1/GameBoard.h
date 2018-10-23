@@ -37,14 +37,20 @@ private:
 	int iDiceStartY;
 	int iDiceWidth;
 	int iDiceHeight;
+
+	int iIndex;
+	bool isClicked;
+
 private:
 	Dice* testDice;
+	RECT rcGameBoard;
 public:
 	GameBoard();
 	~GameBoard();
 public:
 	bool Init();
 	bool Init(int _width, int _height);
+	void Update();
 	void Render(HDC hdc);
 private:
 	void RandomColorPull();

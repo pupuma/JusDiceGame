@@ -48,3 +48,4 @@ typedef  std::string		tstring;   //std::basic_string<char>
 #define EFFECTMANAGER	EffectManager::GetSingleton()
 #define SCENEMANAGER	SceneManager::GetSingleton()
 #define SOUNDMANAGER	SoundManager::GetSingleton()
+#define GAMESYS			GameSystem::GetSingleton()

@@ -26,3 +26,4 @@ struct SPERE
 extern HWND			_hWnd;
 extern HINSTANCE	_hInst;
 extern POINT		_ptMouse;
+extern POINT		_ptSave;

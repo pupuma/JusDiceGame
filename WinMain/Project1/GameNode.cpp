@@ -1,6 +1,5 @@
 #include "Game.h"
 #include "GameNode.h"
-#include "GameSystem.h"
 GameNode::GameNode()
 {
 }
@@ -73,7 +72,7 @@ LRESULT GameNode::MainProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPara
 		EndPaint(_hWnd, &ps);
 		break;
 	case WM_MOUSEMOVE:
-		GameSystem::GetSingleton()->SetMousePosition(lParam);
+		//GameSystem::GetSingleton()->SetMousePosition(lParam);
 		break;
 	case WM_KEYDOWN:
 		switch (wParam)
