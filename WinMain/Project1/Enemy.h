@@ -9,13 +9,27 @@ enum eEnemyType
 class Enemy
 {
 private:
+	int iPosX;
+	int iPosY;
+	int iStartX;
+	int iStartY;
+
+	int iNomalWidth;
+	int iNomalHeight;
+	int iBossWidth;
+	int iBossHeight;
+private:
 	RECT rcEnemy;
 	eEnemyType enemyType;
 public:
 	Enemy();
 	~Enemy();
 public:
-	void Init();
+	bool Init();
+	void Update();
+	void Render(HDC hdc);
+public:
+	RECT GetEnemyRect() { return rcEnemy; }
 
 };
 

@@ -2,8 +2,12 @@
 #include "GameScene.h"
 #include "GameBoard.h"
 
+#include "Enemy.h"
+
 GameScene::GameScene()
 {
+	iEnemyStartX = 0;
+	iEnemyStartY = 0;
 }
 
 
@@ -26,7 +30,18 @@ bool GameScene::Init()
 	testRect = RectMakeCenter(59, 60, 54, 44);
 	// Game Line Init 
 
+	// Game Enemy
+	{
+		int iEnemyCount = GAMESYS->GetRound();
+		for (int i = 0; i < iEnemyCount; i++)
+		{
+			Enemy* enemy = new Enemy();
+			enemy->Init();
+			enemyList.push_back(enemy);
+		}
 
+		GAMESYS->SetEnemyList(enemyList);
+	}
 	// GameBoard 
 	{
 		gameBoard = new GameBoard();
@@ -50,6 +65,11 @@ void GameScene::Release()
 void GameScene::Update()
 {
 	gameBoard->Update();
+
+	for (it = enemyList.begin(); it != enemyList.end(); it++)
+	{
+		(*it)->Update();
+	}
 }
 
 void GameScene::Render(HDC hdc)
@@ -61,13 +81,21 @@ void GameScene::Render(HDC hdc)
 
 	}
 	
+
 	{
 		gameBoard->Render(hdc);
 	}
 	
+	// Enemy
 	{
-		DrawObject(hdc, testRect, 1, RGB(234, 57, 67), ROUNDRECT, 20, 20);
+		for (it = enemyList.begin(); it != enemyList.end(); it++)
+		{
+			//(*it)->Render(hdc);
+		}
+		//DrawObject(hdc, testRect, 1, RGB(234, 57, 67), ROUNDRECT, 20, 20);
+
 	}
+	
 
 	
 	// 도형 그리기 

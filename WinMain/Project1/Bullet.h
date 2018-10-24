@@ -5,7 +5,9 @@ private:
 #if defined(_DEBUG_TEST)
 	POINT pt;
 	POINT ptSave;
+
 #endif//
+private:
 private:
 	bool isLive;
 	bool isFire;
@@ -20,6 +22,7 @@ private:
 	int iHeight;
 
 	float fAngle;
+	float fSaveAngle;
 
 	float targetX;
 	float targetY;
@@ -41,7 +44,7 @@ public:
 	void Render(HDC hdc);
 public:
 	void Fire(RECT _rcTarget);
-	void BulletMove();
+	void BulletMove(RECT _rcTarget);
 	void ResetPosition();
 	void SetPosition(int _x ,int _y);
 public:

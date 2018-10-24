@@ -43,7 +43,8 @@ private:
 private:
 	RECT rcDice;
 	RECT rcGameBoard;
-	RECT targetRect;
+	//RECT targetRect;
+	RECT rcTarget;
 private:
 	int iDiceStartX;
 	int iDiceStartY;

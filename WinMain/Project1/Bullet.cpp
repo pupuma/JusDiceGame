@@ -7,8 +7,9 @@ Bullet::Bullet()
 {
 	isLive = false;
 	isFire = false;
-	fSpeed = 6.0f;
+	fSpeed = 25.0f;
 	isCollision = false;
+	fSaveAngle = 0;
 }
 
 
@@ -52,23 +53,29 @@ void Bullet::Render(HDC hdc)
 void Bullet::Fire(RECT _rcTarget)
 {
 	isFire = true;
-	targetX = _rcTarget.left + ((_rcTarget.right - _rcTarget.left) / 2);
-	targetY = _rcTarget.top + ((_rcTarget.bottom - _rcTarget.top) / 2);
+	//targetX = _rcTarget.left + ((_rcTarget.right - _rcTarget.left) / 2);
+	//targetY = _rcTarget.top + ((_rcTarget.bottom - _rcTarget.top) / 2);
 	
-	ptSave.x = targetX;
-	ptSave.y = targetY;
 
 
 }
 
-void Bullet::BulletMove()
+void Bullet::BulletMove(RECT _rcTarget)
 {
+
+	targetX = _rcTarget.left + ((_rcTarget.right - _rcTarget.left) / 2);
+	targetY = _rcTarget.top + ((_rcTarget.bottom - _rcTarget.top) / 2);
+
+	ptSave.x = targetX;
+	ptSave.y = targetY;
 
 	bulletX = static_cast<float>(iPosX);
 	bulletY = static_cast<float>(iPosY);
 
+	fSaveAngle = fAngle;
+
 	fAngle = UTIL::GetAngle(bulletX, bulletY,targetX, targetY);
-	
+
 	iPosX = iPosX + cosf(fAngle) * fSpeed;
 	iPosY = iPosY + -sinf(fAngle)  * fSpeed;
 

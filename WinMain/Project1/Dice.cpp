@@ -12,7 +12,7 @@ Dice::Dice()
 	isClick = false;
 
 	// Test
-	targetRect = RectMakeCenter(59, 60, 54, 44);
+	//targetRect = RectMakeCenter(59, 60, 54, 44);
 
 	fCoolTime = 3.0f;
 	iIndex = 0;
@@ -124,10 +124,16 @@ bool Dice::Init(int _x, int _y, RECT _rcGameBoard)
 
 		DiceLevelBullet(GetDiceLevel(), ptDicePos.x, ptDicePos.y);
 	}
+
+
+	//Target
+	
 	return true;
 }
 void Dice::Update()
 {
+	
+
 	{
 		if (rcGameBoard.left >= (ptDiceCenterPos.x - iDiceWidth/ 2 ))
 		{
@@ -180,6 +186,11 @@ void Dice::Update()
 			//	fCoolTime = 0;
 			//}
 
+			{
+				rcTarget = GAMESYS->GetRectEnemy();
+
+			}
+
 
 			if (!bulletList[0]->IsFire() &&
 				!bulletList[1]->IsFire() &&
@@ -188,7 +199,7 @@ void Dice::Update()
 				!bulletList[4]->IsFire() &&
 				!bulletList[5]->IsFire())
 			{
-				bulletList[0]->Fire(targetRect);
+				bulletList[0]->Fire(rcTarget);
 			}
 
 
@@ -196,7 +207,7 @@ void Dice::Update()
 			{
 				if (bulletList[i]->IsFire())
 				{
-					bulletList[i]->BulletMove();
+					bulletList[i]->BulletMove(rcTarget);
 					break;
 				}
 
@@ -208,7 +219,7 @@ void Dice::Update()
 			{
 				if (bulletList[i]->IsFire())
 				{
-					if (GAMESYS->CollisionBullet((bulletList[i]), targetRect))
+					if (GAMESYS->CollisionBullet((bulletList[i]), rcTarget))
 					{
 						iIndex++;
 
@@ -216,7 +227,7 @@ void Dice::Update()
 						{
 							iIndex = 0;
 						}
-						bulletList[iIndex]->Fire(targetRect);
+						bulletList[iIndex]->Fire(rcTarget);
 
 					}
 				}

@@ -1,12 +1,17 @@
 #pragma once
 
 class GameBoard;
+class Enemy;
 
 class GameScene
 	: public GameNode
 {
 private:
 	GameBoard* gameBoard;
+	Enemy* enemy;
+	std::list<Enemy*> enemyList;
+	std::list<Enemy*>::iterator it;
+
 private:
 	Image* backGroundImg;
 	RECT testRect;
@@ -15,6 +20,10 @@ private:
 private:
 	int iStartX;
 	int iStartY;
+private:
+	int iEnemyStartX;
+	int iEnemyStartY;
+
 public:
 	GameScene();
 	~GameScene();

@@ -8,6 +8,10 @@
 
 GameSystem::GameSystem()
 {
+	iRound = 1;
+	iCount = 1;
+	iBossConstant = 10;
+	fCoolTime = 1.0f;
 }
 
 
@@ -24,13 +28,13 @@ bool GameSystem::CollisionBullet(Bullet* _bullet, const RECT _target)
 	float fTargetPosX = _target.left + ((_target.right - _target.left) / 2);
 	float fTargetPosY = _target.top + ((_target.bottom - _target.top) / 2);
 
-
-	if (CollisionCircleAndPoint(fRadius, fPosX, fPosY, fTargetPosX, fTargetPosY))
+	fCoolTime -= TIMEMANAGER->GetElapsedTime();
+	if (CollisionCircleAndPoint(fRadius, fPosX, fPosY, fTargetPosX, fTargetPosY) || fCoolTime <= 0 )
 	{
 		_bullet->SetFire(false);
 		_bullet->ResetPosition();
 		_bullet->SetCollision(true);
-
+		fCoolTime = 1.0f;
 		return true;
 	}
 
@@ -38,6 +42,45 @@ bool GameSystem::CollisionBullet(Bullet* _bullet, const RECT _target)
 	
 }
 
+
+
 void GameSystem::AddEnemy()
 {
+}
+
+int GameSystem::EnemyType()
+{
+	
+	/*
+	일반몹 스테이지  =  iRound * iCount ; 
+	보스몹 스테이지 =  iRound * iCount * iBossConstant;
+	
+	*/
+	iRound = iRound * iCount;
+
+	return iRound;
+}
+
+int GameSystem::EnemyCount()
+{
+	if (0 == (iRound % 10))
+	{
+		return 1;
+	}
+	
+	return iRound;
+}
+
+RECT GameSystem::GetRectEnemy()
+{
+	std::list<Enemy*>::iterator it =  enemyList.begin();
+	RECT rc;
+	//for (it = enemyList.begin(); it != enemyList.end(); it++)
+	//{
+	//	rc = (*it)->GetEnemyRect();
+	//	break;
+	//}
+	rc = (*it)->GetEnemyRect();
+
+	return rc;
 }
