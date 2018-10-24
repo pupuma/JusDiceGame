@@ -8,13 +8,14 @@ Dice::Dice()
 	diceType = eDiceColor::DICE_NONE;
 	_image = IMAGEMANAGER->FindImage(TEXT("TestDice"));
 
-	iLevel = 6; 
+	iLevel = 4; 
 	isClick = false;
 
 	// Test
 	targetRect = RectMakeCenter(59, 60, 54, 44);
 
-	fCoolTime = 1.0f;
+	fCoolTime = 3.0f;
+	iIndex = 0;
 }
 
 
@@ -84,16 +85,16 @@ bool Dice::Init(int _x, int _y, RECT _rcGameBoard)
 	{
 		for (int i = 0; i < MAXBULLET; i++)
 		{
-			bullet[i] = new Bullet();
+			//bullet[i] = new Bullet();
+			Bullet* bullet = new Bullet();
+			bulletList.push_back(bullet);
 		}
 
-		for (int i = 0; i < MAXBULLET; i++)
-		{
-			if (!bullet[i]->IsFire())
-			{
-				bullet[i]->Fire(targetRect);
-			}
-		}
+		//for (int i = 0; i < MAXBULLET; i++)
+		//{
+		//	bulletList[i]->Fire(targetRect);
+		//}
+		
 	}
 	// Init
 	{
@@ -155,7 +156,6 @@ void Dice::Update()
 
 		{
 			rcDice = RectMakeCenter(ptDiceCenterPos.x, ptDiceCenterPos.y, iDiceWidth, iDiceHeight);
-
 		}
 
 
@@ -166,32 +166,74 @@ void Dice::Update()
 			DiceLevelBulletUpdate(GetDiceLevel(), rcDice.left, rcDice.top);
 
 			//
-			fCoolTime -= TIMEMANAGER->GetElapsedTime();
-			if (fCoolTime <= 0)
+			//fCoolTime -= TIMEMANAGER->GetElapsedTime();
+			//if (fCoolTime <= 0)
+			//{
+			//	for (int i = 0; i < iLevel; i++)
+			//	{
+			//		if (!bulletList[i]->IsFire())
+			//		{
+			//			bulletList[i]->Fire(targetRect);
+			//			break;
+			//		}
+			//	}
+			//	fCoolTime = 0;
+			//}
+
+
+			if (!bulletList[0]->IsFire() &&
+				!bulletList[1]->IsFire() &&
+				!bulletList[2]->IsFire() &&
+				!bulletList[3]->IsFire() &&
+				!bulletList[4]->IsFire() &&
+				!bulletList[5]->IsFire())
 			{
-				
-				fCoolTime = 0;
+				bulletList[0]->Fire(targetRect);
 			}
 
 
 			for (int i = 0; i < MAXBULLET; i++)
 			{
-				if (bullet[i]->IsFire())
+				if (bulletList[i]->IsFire())
 				{
-					bullet[i]->BulletMove();
+					bulletList[i]->BulletMove();
+					break;
 				}
+
 			}
 			
 
 			// Collision
 			for (int i = 0; i < MAXBULLET; i++)
 			{
-				if (bullet[i]->IsFire())
+				if (bulletList[i]->IsFire())
 				{
-					GAMESYS->CollisionBullet((bullet[i]), targetRect);
-				}
+					if (GAMESYS->CollisionBullet((bulletList[i]), targetRect))
+					{
+						iIndex++;
 
+						if (iIndex == iLevel)
+						{
+							iIndex = 0;
+						}
+						bulletList[iIndex]->Fire(targetRect);
+
+					}
+				}
 			}
+	
+
+			//if (bulletList[iLevel-1]->IsCollision())
+			//{
+			//	for (int i = 0; i < MAXBULLET; i++)
+			//	{
+			//		if (!bulletList[i]->IsFire())
+			//		{
+			//			bulletList[i]->Fire(targetRect);
+			//		}
+			//		bulletList[i]->SetCollision(false);
+			//	}
+			//}
 		}
 
 
@@ -208,16 +250,16 @@ void Dice::Render(HDC hdc)
 
 	for (int i = 0; i < 6; i++)
 	{
-		DrawObject(hdc, levelPos.rcLevel6[i], 1, RGB(125, 125, 3), ELLIPSE);
+		//DrawObject(hdc, levelPos.rcLevel6[i], 1, RGB(125, 125, 3), ELLIPSE);
 	}
 	
 	//  DrawBullet
 	{
 		for (int i = 0; i < MAXBULLET; i++)
 		{
-			if (bullet[i]->IsFire())
+			//if (bullet[i]->IsFire())
 			{
-				bullet[i]->Render(hdc);
+				bulletList[i]->Render(hdc);
 			}
 		}
 	}
@@ -225,6 +267,7 @@ void Dice::Render(HDC hdc)
 
 void Dice::DiceLevelBullet(int _level, int _x ,int _y)
 {
+
 	switch (_level)
 	{
 	case 1:
@@ -232,9 +275,8 @@ void Dice::DiceLevelBullet(int _level, int _x ,int _y)
 		levelPos.iCircleStartX = _x + iDiceWidth / 2;
 		levelPos.iCircleStartY = _y + iDiceHeight / 2;
 		levelPos.rcLevel1 = RectMakeCenter(levelPos.iCircleStartX, levelPos.iCircleStartY, 14, 12);
-		bullet[0]->Init(levelPos.iCircleStartX, levelPos.iCircleStartY);
+		bulletList[0]->Init(levelPos.iCircleStartX, levelPos.iCircleStartY);
 
-	
 
 	}
 		break;
@@ -246,7 +288,8 @@ void Dice::DiceLevelBullet(int _level, int _x ,int _y)
 		for (int i = 0; i < 2; i++)
 		{
 			levelPos.rcLevel2[i] = RectMakeCenter(levelPos.iCircleStartX, levelPos.iCircleStartY, 14, 12);
-			bullet[i]->Init(levelPos.iCircleStartX, levelPos.iCircleStartY);
+			bulletList[i]->Init(levelPos.iCircleStartX, levelPos.iCircleStartY);
+
 
 
 			levelPos.iCircleStartX += (iDiceWidth / 3);
@@ -262,7 +305,7 @@ void Dice::DiceLevelBullet(int _level, int _x ,int _y)
 		for (int i = 0; i < 3; i++)
 		{
 			levelPos.rcLevel3[i] = RectMakeCenter(levelPos.iCircleStartX, levelPos.iCircleStartY, 14, 12);
-			bullet[i]->Init(levelPos.iCircleStartX, levelPos.iCircleStartY);
+			bulletList[i]->Init(levelPos.iCircleStartX, levelPos.iCircleStartY);
 
 
 
@@ -284,8 +327,7 @@ void Dice::DiceLevelBullet(int _level, int _x ,int _y)
 			for (int j = 0; j < 2; j++)
 			{
 				levelPos.rcLevel4[iTemp] = RectMakeCenter(levelPos.iCircleStartX, levelPos.iCircleStartY, 14, 12);
-				bullet[iTemp]->Init(levelPos.iCircleStartX, levelPos.iCircleStartY);
-
+				bulletList[iTemp]->Init(levelPos.iCircleStartX, levelPos.iCircleStartY);
 
 				levelPos.iCircleStartX += iDiceWidth / 3;
 				iTemp++;
@@ -307,7 +349,7 @@ void Dice::DiceLevelBullet(int _level, int _x ,int _y)
 			for (int j = 0; j < 2; j++)
 			{
 				levelPos.rcLevel5[iTemp] = RectMakeCenter(levelPos.iCircleStartX, levelPos.iCircleStartY, 14, 12);
-				bullet[iTemp]->Init(levelPos.iCircleStartX, levelPos.iCircleStartY);
+				bulletList[iTemp]->Init(levelPos.iCircleStartX, levelPos.iCircleStartY);
 
 
 				levelPos.iCircleStartX += (iDiceWidth / 4 * 2);
@@ -321,7 +363,7 @@ void Dice::DiceLevelBullet(int _level, int _x ,int _y)
 		levelPos.iCircleStartY = _y + iDiceHeight / 2;
 
 		levelPos.rcLevel5[4] = RectMakeCenter(levelPos.iCircleStartX, levelPos.iCircleStartY, 14, 12);
-		bullet[4]->Init(levelPos.iCircleStartX, levelPos.iCircleStartY);
+		bulletList[4]->Init(levelPos.iCircleStartX, levelPos.iCircleStartY);
 
 
 	}
@@ -337,7 +379,7 @@ void Dice::DiceLevelBullet(int _level, int _x ,int _y)
 			for (int j = 0; j < 2; j++)
 			{
 				levelPos.rcLevel6[iTemp] = RectMakeCenter(levelPos.iCircleStartX, levelPos.iCircleStartY, 14, 12);
-				bullet[iTemp]->Init(levelPos.iCircleStartX, levelPos.iCircleStartY);
+				bulletList[iTemp]->Init(levelPos.iCircleStartX, levelPos.iCircleStartY);
 
 
 				levelPos.iCircleStartX += (iDiceWidth / 6 * 2);
@@ -370,7 +412,6 @@ void Dice::DiceLevelBulletUpdate(int _level, int _x, int _y)
 		for (int i = 0; i < 2; i++)
 		{
 			levelPos.rcLevel2[i] = RectMakeCenter(levelPos.iCircleStartX, levelPos.iCircleStartY, 14, 12);
-
 			levelPos.iCircleStartX += (iDiceWidth / 3);
 
 		}
@@ -385,6 +426,7 @@ void Dice::DiceLevelBulletUpdate(int _level, int _x, int _y)
 		{
 			levelPos.rcLevel3[i] = RectMakeCenter(levelPos.iCircleStartX, levelPos.iCircleStartY, 14, 12);
 
+			
 			levelPos.iCircleStartX += iDiceWidth / 4;
 			levelPos.iCircleStartY += iDiceHeight / 4;
 
@@ -403,6 +445,9 @@ void Dice::DiceLevelBulletUpdate(int _level, int _x, int _y)
 			for (int j = 0; j < 2; j++)
 			{
 				levelPos.rcLevel4[iTemp] = RectMakeCenter(levelPos.iCircleStartX, levelPos.iCircleStartY, 14, 12);
+
+			
+
 
 				levelPos.iCircleStartX += iDiceWidth / 3;
 				iTemp++;
@@ -445,15 +490,14 @@ void Dice::DiceLevelBulletUpdate(int _level, int _x, int _y)
 		levelPos.iCircleStartX = _x + (iDiceWidth / 6 * 2);
 		levelPos.iCircleStartY = _y + iDiceHeight / 4;
 
-		int iTemp2 = 0;
+		int iTemp = 0;
 		for (int i = 0; i < 3; i++)
 		{
 			for (int j = 0; j < 2; j++)
 			{
-				levelPos.rcLevel6[iTemp2] = RectMakeCenter(levelPos.iCircleStartX, levelPos.iCircleStartY, 14, 12);
-
+				levelPos.rcLevel6[iTemp] = RectMakeCenter(levelPos.iCircleStartX, levelPos.iCircleStartY, 14, 12);
 				levelPos.iCircleStartX += (iDiceWidth / 6 * 2);
-				iTemp2++;
+				iTemp++;
 			}
 			levelPos.iCircleStartX = _x + (iDiceWidth / 6 * 2);
 			levelPos.iCircleStartY += (iDiceHeight / 4);

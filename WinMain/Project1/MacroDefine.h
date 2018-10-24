@@ -8,8 +8,9 @@
 //#define _STALKER_TEST
 //#define _ANI_TEST
 //#define _CAMERA_TEST
-#define _PIXEL_TEST
+//#define _PIXEL_TEST
 //#define _EFFECT_TEST
+#define _DEBUG_TEST
 
 #if defined(_UNICODE)
 typedef  std::wstring		tstring;  //std::basic_string<wchar>

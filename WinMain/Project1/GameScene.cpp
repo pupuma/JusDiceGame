@@ -66,8 +66,10 @@ void GameScene::Render(HDC hdc)
 	}
 	
 	{
-		//DrawObject(hdc, testRect, 1, RGB(234, 57, 67), ROUNDRECT, 20, 20);
+		DrawObject(hdc, testRect, 1, RGB(234, 57, 67), ROUNDRECT, 20, 20);
 	}
+
+	
 	// 도형 그리기 
 	//RoundRect(hdc, testRect.left, testRect.top, testRect.right, testRect.bottom, 30, 30);
 }

@@ -30,7 +30,9 @@ private:
 		RECT rcLevel6[6];
 	};
 private:
-	Bullet* bullet[MAXBULLET];
+	//Bullet* bullet[MAXBULLET];
+	std::vector<Bullet*> bulletList;
+	std::vector<Bullet*>::iterator it;
 private:
 	eDiceColor diceType;
 	tagLevelPosition levelPos;
@@ -50,6 +52,7 @@ private:
 	int iDiceHeight;
 	
 	int iLevel;
+	int iIndex;
 
 	float fCoolTime;
 private:
@@ -77,6 +80,8 @@ public:
 	
 	void SetDicePosition(POINT _pt) { ptDiceCenterPos = _pt; }
 	POINT GetDiceCenterPosition() { return ptDiceCenterPos; }
+
+	std::vector<Bullet*> GetBulletList() { return bulletList; }
 
 };
 

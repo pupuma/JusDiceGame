@@ -2,6 +2,8 @@
 #include "GameSystem.h"
 
 #include "Bullet.h"
+#include "Dice.h"
+#include "Enemy.h"
 
 
 GameSystem::GameSystem()
@@ -13,7 +15,7 @@ GameSystem::~GameSystem()
 {
 }
 
-void GameSystem::CollisionBullet(Bullet* _bullet, const RECT _target)
+bool GameSystem::CollisionBullet(Bullet* _bullet, const RECT _target)
 {
 	float fRadius = 7.0f;
 	float fPosX = _bullet->GetBulletCenterX();
@@ -27,19 +29,15 @@ void GameSystem::CollisionBullet(Bullet* _bullet, const RECT _target)
 	{
 		_bullet->SetFire(false);
 		_bullet->ResetPosition();
+		_bullet->SetCollision(true);
+
+		return true;
 	}
+
+	return false;
+	
 }
 
 void GameSystem::AddEnemy()
 {
-	int round = GetRound();
-
-	if ((round % 10) == 0)
-	{
-		// 보스 몬스터 생성 
-	}
-	else
-	{
-		// 일반 몬스터 생성 
-	}
 }

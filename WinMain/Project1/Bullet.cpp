@@ -7,6 +7,8 @@ Bullet::Bullet()
 {
 	isLive = false;
 	isFire = false;
+	fSpeed = 6.0f;
+	isCollision = false;
 }
 
 
@@ -41,6 +43,10 @@ void Bullet::Update()
 void Bullet::Render(HDC hdc)
 {
 	DrawObject(hdc, rcBullet, 1, RGB(123, 123, 123), ELLIPSE);
+
+#if defined(_DEBUG_TEST)
+	DrawLine(hdc, ptSave, pt, 1, RGB(255, 0, 0));
+#endif//
 }
 
 void Bullet::Fire(RECT _rcTarget)
@@ -49,6 +55,8 @@ void Bullet::Fire(RECT _rcTarget)
 	targetX = _rcTarget.left + ((_rcTarget.right - _rcTarget.left) / 2);
 	targetY = _rcTarget.top + ((_rcTarget.bottom - _rcTarget.top) / 2);
 	
+	ptSave.x = targetX;
+	ptSave.y = targetY;
 
 
 }
@@ -60,9 +68,12 @@ void Bullet::BulletMove()
 	bulletY = static_cast<float>(iPosY);
 
 	fAngle = UTIL::GetAngle(bulletX, bulletY,targetX, targetY);
+	
+	iPosX = iPosX + cosf(fAngle) * fSpeed;
+	iPosY = iPosY + -sinf(fAngle)  * fSpeed;
 
-	iPosX = iPosX + cosf(fAngle) * 3.0f;
-	iPosY = iPosY + -sinf(fAngle) * 3.0f;
+	pt.x = iPosX;
+	pt.y = iPosY;
 
 	rcBullet = RectMakeCenter(iPosX, iPosY, iWidth, iHeight);
 }
@@ -70,5 +81,14 @@ void Bullet::BulletMove()
 void Bullet::ResetPosition()
 {
 	rcBullet = RectMakeCenter(iStartPosX, iStartPosY, iWidth, iHeight);
+	iPosX = iStartPosX;
+	iPosY = iStartPosY;
+	isCollision = false;
+}
+
+void Bullet::SetPosition(int _x, int _y)
+{
+	iPosX = _x;
+	iPosY = _y;
 
 }

@@ -251,10 +251,16 @@ void GameBoard::Update()
 
 
 
-	for (int i = 0; i < GAMEBOARDSIZE; i++)
-	{
-		dice[i]->Update();
-	}
+	//for (int i = 0; i < GAMEBOARDSIZE; i++)
+	//{
+	//	dice[i]->Update();
+	//}
+
+	dice[0]->Update();
+	//dice[5]->Update();
+	//dice[10]->Update();
+	//dice[15]->Update();
+
 
 
 }
@@ -336,6 +342,12 @@ void GameBoard::Render(HDC hdc)
 				dice[i]->Render(hdc);
 			}
 		}
+
+		//dice[0]->Render(hdc);
+		//dice[5]->Render(hdc);
+		//dice[10]->Render(hdc);
+		//dice[15]->Render(hdc);
+
 		dice[iIndex]->Render(hdc);
 	}
 

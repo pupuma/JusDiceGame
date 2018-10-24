@@ -2,6 +2,11 @@
 class Bullet
 {
 private:
+#if defined(_DEBUG_TEST)
+	POINT pt;
+	POINT ptSave;
+#endif//
+private:
 	bool isLive;
 	bool isFire;
 
@@ -22,6 +27,9 @@ private:
 	float bulletX;
 	float bulletY;
 
+	bool isCollision;
+private:
+	float fSpeed;
 private:
 	RECT rcBullet;
 public:
@@ -35,14 +43,21 @@ public:
 	void Fire(RECT _rcTarget);
 	void BulletMove();
 	void ResetPosition();
+	void SetPosition(int _x ,int _y);
 public:
 	bool IsFire() { return isFire; }
 	void SetFire(bool _isFire) { isFire = _isFire; }
+	
 	RECT GetBulletRect() { return rcBullet; }
+	
 	int GetBulletCenterX() { return iPosX; }
 	int GetBulletCenterY() { return iPosY; }
 
+	int GetBulletStartX() { return iStartPosX; }
+	int GetBulletStartY() { return iStartPosY; }
 
-public:
+	bool IsCollision() { return isCollision; }
+	void SetCollision(bool _isCollision) { isCollision = _isCollision; }
+
 };
 
