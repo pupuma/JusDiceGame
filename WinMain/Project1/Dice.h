@@ -3,6 +3,7 @@
 #define MAXBULLET 6
 
 class Bullet;
+class State;
 
 enum eDiceColor
 {
@@ -17,6 +18,8 @@ enum eDiceColor
 
 class Dice
 {
+private:
+	eStateType stateType;
 private:
 	 struct tagLevelPosition
 	{
@@ -40,6 +43,7 @@ private:
 	Image* _image;
 	POINT ptDiceCenterPos;
 	POINT ptDicePos;
+	POINT ptSave;
 private:
 	RECT rcDice;
 	RECT rcGameBoard;
@@ -72,6 +76,11 @@ public:
 	void DiceLevelBulletUpdate(int _level, int _x, int _y);
 
 	void LevelDiceRender(HDC hdc);
+	POINT DiceStartFirePos(int _level, int _x, int _y);
+	void DiceFirePos(int _level, int _x, int _y);
+
+
+	
 public:
 	int GetDiceLevel() { return iLevel; }
 	bool IsClick() { return isClick; }

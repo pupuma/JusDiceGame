@@ -76,6 +76,9 @@
     <Filter Include="MainGame\02.Object\Character\Bullet">
       <UniqueIdentifier>{570a1044-db24-46a4-9bff-e41cffe80b3c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MainGame\State">
+      <UniqueIdentifier>{23f01655-0ad7-441a-80d6-02291360d263}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinMain.cpp">
@@ -158,6 +161,18 @@
     </ClCompile>
     <ClCompile Include="Dice.cpp">
       <Filter>MainGame\02.Object\Character\Dice</Filter>
+    </ClCompile>
+    <ClCompile Include="State.cpp">
+      <Filter>MainGame\State</Filter>
+    </ClCompile>
+    <ClCompile Include="AttackState.cpp">
+      <Filter>MainGame\State</Filter>
+    </ClCompile>
+    <ClCompile Include="IdleState.cpp">
+      <Filter>MainGame\State</Filter>
+    </ClCompile>
+    <ClCompile Include="StateManager.cpp">
+      <Filter>2DFrameWork\Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -248,14 +263,29 @@
     <ClInclude Include="GameSystem.h">
       <Filter>2DFrameWork\System</Filter>
     </ClInclude>
-    <ClInclude Include="Bullet.h">
-      <Filter>MainGame\02.Object\Character\Bullet</Filter>
-    </ClInclude>
     <ClInclude Include="Enemy.h">
       <Filter>MainGame\02.Object\Character</Filter>
     </ClInclude>
     <ClInclude Include="Dice.h">
       <Filter>MainGame\02.Object\Character\Dice</Filter>
+    </ClInclude>
+    <ClInclude Include="Bullet.h">
+      <Filter>MainGame\02.Object\Character\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h">
+      <Filter>MainGame\State</Filter>
+    </ClInclude>
+    <ClInclude Include="StateType.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="AttackState.h">
+      <Filter>MainGame\State</Filter>
+    </ClInclude>
+    <ClInclude Include="IdleState.h">
+      <Filter>MainGame\State</Filter>
+    </ClInclude>
+    <ClInclude Include="StateManager.h">
+      <Filter>2DFrameWork\Manager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -7,7 +7,7 @@ Bullet::Bullet()
 {
 	isLive = false;
 	isFire = false;
-	fSpeed = 25.0f;
+	fSpeed = 10.0f;
 	isCollision = false;
 	fSaveAngle = 0;
 }
@@ -52,11 +52,20 @@ void Bullet::Render(HDC hdc)
 
 void Bullet::Fire(RECT _rcTarget)
 {
+
 	isFire = true;
 	//targetX = _rcTarget.left + ((_rcTarget.right - _rcTarget.left) / 2);
 	//targetY = _rcTarget.top + ((_rcTarget.bottom - _rcTarget.top) / 2);
 	
 
+
+}
+
+void Bullet::Fire(RECT _rcTarget,POINT _pt)
+{
+	isFire = true;
+	iPosX = _pt.x;
+	iPosY = _pt.y;
 
 }
 
@@ -97,5 +106,18 @@ void Bullet::SetPosition(int _x, int _y)
 {
 	iPosX = _x;
 	iPosY = _y;
+	rcBullet = RectMakeCenter(iPosX, iPosY, iWidth, iHeight);
 
+}
+
+void Bullet::SetPosition(POINT _pt)
+{
+	iPosX = _pt.x;
+	iPosY = _pt.y;
+}
+
+void Bullet::SetStartPosition(POINT _pt)
+{
+	iStartPosX = _pt.x;
+	iStartPosY = _pt.y;
 }

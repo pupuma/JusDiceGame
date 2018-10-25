@@ -2,6 +2,7 @@
 #include "Dice.h"
 
 #include "Bullet.h"
+#include "State.h"
 
 Dice::Dice()
 {
@@ -16,6 +17,7 @@ Dice::Dice()
 
 	fCoolTime = 3.0f;
 	iIndex = 0;
+	stateType = eStateType::STATE_NONE;
 }
 
 
@@ -79,6 +81,7 @@ bool Dice::Init(int _x, int _y, RECT _rcGameBoard)
 {
 	{
 		rcGameBoard = _rcGameBoard;
+		stateType = eStateType::STATE_IDLE;
 	}
 
 	//Bullet Create
@@ -132,7 +135,7 @@ bool Dice::Init(int _x, int _y, RECT _rcGameBoard)
 }
 void Dice::Update()
 {
-	
+	//state->Update();
 
 	{
 		if (rcGameBoard.left >= (ptDiceCenterPos.x - iDiceWidth/ 2 ))
@@ -162,14 +165,17 @@ void Dice::Update()
 
 		{
 			rcDice = RectMakeCenter(ptDiceCenterPos.x, ptDiceCenterPos.y, iDiceWidth, iDiceHeight);
+			DiceLevelBulletUpdate(GetDiceLevel(), rcDice.left, rcDice.top);
+
 		}
 
 
+#if defined(_DEBUG_TEST)
+#else
 
 		
 		{
 			//DiceLevelBullet(GetDiceLevel(), rcDice.left, rcDice.top);
-			DiceLevelBulletUpdate(GetDiceLevel(), rcDice.left, rcDice.top);
 
 			//
 			//fCoolTime -= TIMEMANAGER->GetElapsedTime();
@@ -191,6 +197,9 @@ void Dice::Update()
 
 			}
 
+			// 마우스 위치에 따라 변경 되는 총알 위치 
+			{
+			}
 
 			if (!bulletList[0]->IsFire() &&
 				!bulletList[1]->IsFire() &&
@@ -199,10 +208,12 @@ void Dice::Update()
 				!bulletList[4]->IsFire() &&
 				!bulletList[5]->IsFire())
 			{
-				bulletList[0]->Fire(rcTarget);
+				ptSave = DiceStartFirePos(GetDiceLevel(), rcDice.left, rcDice.top);
+				bulletList[0]->Fire(rcTarget, ptSave);
 			}
 
-
+			DiceFirePos(GetDiceLevel(), rcDice.left, rcDice.top);
+			
 			for (int i = 0; i < MAXBULLET; i++)
 			{
 				if (bulletList[i]->IsFire())
@@ -212,7 +223,7 @@ void Dice::Update()
 				}
 
 			}
-			
+
 
 			// Collision
 			for (int i = 0; i < MAXBULLET; i++)
@@ -232,24 +243,14 @@ void Dice::Update()
 					}
 				}
 			}
-	
 
-			//if (bulletList[iLevel-1]->IsCollision())
-			//{
-			//	for (int i = 0; i < MAXBULLET; i++)
-			//	{
-			//		if (!bulletList[i]->IsFire())
-			//		{
-			//			bulletList[i]->Fire(targetRect);
-			//		}
-			//		bulletList[i]->SetCollision(false);
-			//	}
-			//}
+
 		}
+#endif
 
 
 	}
-	
+
 
 }
 
@@ -257,23 +258,23 @@ void Dice::Render(HDC hdc)
 {
 	_image->FrameRender(hdc, rcDice.left, rcDice.top);
 	//DrawObject(hdc, rcDice, 1, RGB(125, 125, 3), RECTANGLE);
-	//LevelDiceRender(hdc);
+	LevelDiceRender(hdc);
 
-	for (int i = 0; i < 6; i++)
-	{
-		//DrawObject(hdc, levelPos.rcLevel6[i], 1, RGB(125, 125, 3), ELLIPSE);
-	}
-	
+
 	//  DrawBullet
 	{
 		for (int i = 0; i < MAXBULLET; i++)
 		{
-			//if (bullet[i]->IsFire())
+			if (bulletList[i]->IsFire())
 			{
 				bulletList[i]->Render(hdc);
 			}
 		}
 	}
+
+
+	
+	
 }
 
 void Dice::DiceLevelBullet(int _level, int _x ,int _y)
@@ -414,6 +415,7 @@ void Dice::DiceLevelBulletUpdate(int _level, int _x, int _y)
 		levelPos.iCircleStartY = _y + iDiceHeight / 2;
 		levelPos.rcLevel1 = RectMakeCenter(levelPos.iCircleStartX, levelPos.iCircleStartY, 14, 12);
 	}
+
 	break;
 	case 2:
 	{
@@ -423,8 +425,8 @@ void Dice::DiceLevelBulletUpdate(int _level, int _x, int _y)
 		for (int i = 0; i < 2; i++)
 		{
 			levelPos.rcLevel2[i] = RectMakeCenter(levelPos.iCircleStartX, levelPos.iCircleStartY, 14, 12);
-			levelPos.iCircleStartX += (iDiceWidth / 3);
 
+			levelPos.iCircleStartX += (iDiceWidth / 3);
 		}
 	}
 	break;
@@ -456,8 +458,6 @@ void Dice::DiceLevelBulletUpdate(int _level, int _x, int _y)
 			for (int j = 0; j < 2; j++)
 			{
 				levelPos.rcLevel4[iTemp] = RectMakeCenter(levelPos.iCircleStartX, levelPos.iCircleStartY, 14, 12);
-
-			
 
 
 				levelPos.iCircleStartX += iDiceWidth / 3;
@@ -507,6 +507,8 @@ void Dice::DiceLevelBulletUpdate(int _level, int _x, int _y)
 			for (int j = 0; j < 2; j++)
 			{
 				levelPos.rcLevel6[iTemp] = RectMakeCenter(levelPos.iCircleStartX, levelPos.iCircleStartY, 14, 12);
+
+
 				levelPos.iCircleStartX += (iDiceWidth / 6 * 2);
 				iTemp++;
 			}
@@ -571,3 +573,209 @@ void Dice::LevelDiceRender(HDC hdc)
 	break;
 	}
 }
+
+POINT Dice::DiceStartFirePos(int _level, int _x, int _y)
+{
+	POINT pt;
+
+	switch (_level)
+	{
+	case 1:
+	{
+		pt.x = _x + iDiceWidth / 2;
+		pt.y = _y + iDiceHeight / 2;
+	}
+
+	break;
+	case 2:
+	{
+		pt.x = _x + iDiceWidth / 3;
+		pt.y = _y + iDiceHeight / 2;
+	
+	}
+	break;
+	case 3:
+	{
+		pt.x = _x + iDiceWidth / 4;
+		pt.y = _y + iDiceHeight / 4;
+
+	}
+	break;
+	case 4:
+	{
+		pt.x = _x + iDiceWidth / 3;
+		pt.y = _y + iDiceHeight / 3;
+	}
+	break;
+	case 5:
+	{
+		pt.x = _x + iDiceWidth / 4;
+		pt.y = _y + iDiceHeight / 4;
+
+
+	}
+	break;
+	case 6:
+	{
+		pt.x = _x + (iDiceWidth / 6 * 2);
+		pt.y = _y + iDiceHeight / 4;
+		
+	}
+	break;
+
+	}
+
+	return pt;
+}
+
+void Dice::DiceFirePos(int _level, int _x, int _y)
+{
+
+	switch (_level)
+	{
+	case 1:
+	{
+		if (!bulletList[0]->IsFire())
+		{
+			ptSave.x = _x + iDiceWidth / 2;
+			ptSave.y = _y + iDiceHeight / 2;
+			bulletList[0]->SetPosition(ptSave);
+			bulletList[0]->SetStartPosition(ptSave);
+		}
+
+		
+	}
+
+	break;
+	case 2:
+	{
+		ptSave.x = _x + iDiceWidth / 3;
+		ptSave.y = _y + iDiceHeight / 2;
+
+		for (int i = 0; i < 2; i++)
+		{
+			if (!bulletList[i]->IsFire())
+			{
+				bulletList[i]->SetPosition(ptSave);
+				bulletList[i]->SetStartPosition(ptSave);
+
+
+			}
+			ptSave.x += (iDiceWidth / 3);
+
+		}
+	}
+	break;
+	case 3:
+	{
+		ptSave.x = _x + iDiceWidth / 4;
+		ptSave.y = _y + iDiceHeight / 4;
+
+		for (int i = 0; i < 3; i++)
+		{
+			if (!bulletList[i]->IsFire())
+			{
+				bulletList[i]->SetPosition(ptSave);
+				bulletList[i]->SetStartPosition(ptSave);
+
+
+			}
+			ptSave.x += iDiceWidth / 4;
+			ptSave.y += iDiceHeight / 4;
+
+		}
+
+	}
+	break;
+	case 4:
+	{
+		ptSave.x = _x + iDiceWidth / 3;
+		ptSave.y = _y + iDiceHeight / 3;
+
+		int iTemp = 0;
+		for (int i = 0; i < 2; i++)
+		{
+			for (int j = 0; j < 2; j++)
+			{
+				if (!bulletList[iTemp]->IsFire())
+				{
+					bulletList[iTemp]->SetPosition(ptSave);
+					bulletList[iTemp]->SetStartPosition(ptSave);
+
+
+				}
+
+				ptSave.x += iDiceWidth / 3;
+				iTemp++;
+			}
+			ptSave.x = _x + iDiceWidth / 3;
+			ptSave.y += iDiceHeight / 3;
+		}
+
+	}
+	break;
+	case 5:
+	{
+		ptSave.x = _x + iDiceWidth / 4;
+		ptSave.y = _y + iDiceHeight / 4;
+
+		int iTemp = 0;
+		for (int i = 0; i < 2; i++)
+		{
+			for (int j = 0; j < 2; j++)
+			{
+				if (!bulletList[iTemp]->IsFire())
+				{
+					bulletList[iTemp]->SetPosition(ptSave);
+					bulletList[iTemp]->SetStartPosition(ptSave);
+
+
+				}
+				ptSave.x += (iDiceWidth / 4 * 2);
+				iTemp++;
+			}
+			ptSave.x = _x + iDiceWidth / 4;
+			ptSave.y += (iDiceHeight / 4 * 2);
+		}
+
+		ptSave.x = _x + iDiceWidth / 2;
+		ptSave.y = _y + iDiceHeight / 2;
+
+		if (!bulletList[4]->IsFire())
+		{
+			bulletList[4]->SetPosition(ptSave);
+			bulletList[4]->SetStartPosition(ptSave);
+
+		}
+
+	}
+	break;
+	case 6:
+	{
+		ptSave.x = _x + (iDiceWidth / 6 * 2);
+		ptSave.y = _y + iDiceHeight / 4;
+
+		int iTemp = 0;
+		for (int i = 0; i < 3; i++)
+		{
+			for (int j = 0; j < 2; j++)
+			{
+				if (!bulletList[iTemp]->IsFire())
+				{
+					bulletList[iTemp]->SetPosition(ptSave); 
+					bulletList[iTemp]->SetStartPosition(ptSave);
+
+					
+				}
+				levelPos.iCircleStartX += (iDiceWidth / 6 * 2);
+				iTemp++;
+			}
+			levelPos.iCircleStartX = _x + (iDiceWidth / 6 * 2);
+			levelPos.iCircleStartY += (iDiceHeight / 4);
+		}
+	}
+	break;
+
+	}
+}
+

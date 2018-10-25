@@ -13,7 +13,7 @@ class Dice;
 class GameBoard
 {
 private:
-	Dice* dice[GAMEBOARDSIZE];
+	//Dice* dice[GAMEBOARDSIZE];
 private:
 	RECT rcTest[GAMEBOARDSIZE];
 	
@@ -26,7 +26,7 @@ private:
 
 	// vector?
 	std::vector<RECT> vCircleList;
-	
+	std::vector<Dice*> diceList;
 private:
 	POINT ptGameLine1;
 	POINT ptGameLine2;
@@ -42,7 +42,6 @@ private:
 	bool isClicked;
 
 private:
-	Dice* testDice;
 	RECT rcGameBoard;
 public:
 	GameBoard();

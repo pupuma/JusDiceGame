@@ -12,6 +12,7 @@ GameSystem::GameSystem()
 	iCount = 1;
 	iBossConstant = 10;
 	fCoolTime = 1.0f;
+	iEnemyHp = 1;
 }
 
 
@@ -35,6 +36,9 @@ bool GameSystem::CollisionBullet(Bullet* _bullet, const RECT _target)
 		_bullet->ResetPosition();
 		_bullet->SetCollision(true);
 		fCoolTime = 1.0f;
+
+		// Enemy
+		
 		return true;
 	}
 
@@ -51,14 +55,14 @@ void GameSystem::AddEnemy()
 int GameSystem::EnemyType()
 {
 	
-	/*
-	일반몹 스테이지  =  iRound * iCount ; 
-	보스몹 스테이지 =  iRound * iCount * iBossConstant;
 	
-	*/
-	iRound = iRound * iCount;
+	//iRound = iRound * iCount;
+	if (0 == (iRound % 10))
+	{
+		return 1;
+	}
 
-	return iRound;
+	return 0;
 }
 
 int GameSystem::EnemyCount()
@@ -83,4 +87,45 @@ RECT GameSystem::GetRectEnemy()
 	rc = (*it)->GetEnemyRect();
 
 	return rc;
+}
+
+int GameSystem::GetEnemyHp()
+{
+
+	/*
+	일반몹 스테이지 별 채력  =  iRound * iCount ;
+	보스몹 스테이지 별 채력  =  iRound * iCount * iBossConstant;
+	*/
+	if (0 == (iRound % 10))
+	{
+		iEnemyHp = iRound * iCount * iBossConstant;
+	}
+	else
+	{
+		iEnemyHp = iRound * iCount;
+	}
+
+
+	return iEnemyHp;
+}
+
+void GameSystem::GetDiceList(std::vector<Dice*> _diceList)
+{
+	diceList = _diceList;
+}
+
+void GameSystem::CollisionEnemy(std::list<Enemy*> _enmeyList)
+{
+	// Enemy
+	enemyList = _enmeyList;
+	std::list<Enemy*>::iterator it;
+
+	// Dice
+	//std::vector<Dice*>::iterator iter;
+
+
+	// Dice 
+	{
+
+	}
 }

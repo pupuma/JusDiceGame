@@ -7,12 +7,15 @@ class Dice;
 class GameSystem
 	: public SingletonBase<GameSystem>
 {
-public:
+private:
 	int iRound;
 	int iCount;
 	int iBossConstant;
-	
+	int iEnemyHp;
+private:
 	std::list<Enemy*> enemyList;
+	std::vector<Dice*> diceList;
+private:
 	float fCoolTime;
 
 public:
@@ -25,6 +28,11 @@ public:
 	int EnemyType();
 	int EnemyCount();
 	RECT GetRectEnemy();
+	int GetEnemyHp();
+	void GetDiceList(std::vector<Dice*> _diceList);
+	void CollisionEnemy(std::list<Enemy*> _enmeyList);
+
+ 
 public:
 	void SetRound(int _round) { iRound = _round; }
 	int GetRound() { return iRound; }
@@ -32,6 +40,7 @@ public:
 	void SetEnemyList(std::list<Enemy*> _enemyList) { enemyList = _enemyList; }
 	std::list<Enemy*> GetEnemyList() { return enemyList; }
 	void SetfCoolTime(float _coolTime) { fCoolTime = _coolTime; }
+	std::vector<Dice*> GetDiceList() { return diceList; }
 
 };
 

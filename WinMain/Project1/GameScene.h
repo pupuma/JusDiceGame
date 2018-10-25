@@ -3,6 +3,13 @@
 class GameBoard;
 class Enemy;
 
+enum eGameType
+{
+	GMAE_IDLE,
+	GMAE_PLAY,
+	GAME_STOP,
+};
+
 class GameScene
 	: public GameNode
 {
@@ -11,7 +18,7 @@ private:
 	Enemy* enemy;
 	std::list<Enemy*> enemyList;
 	std::list<Enemy*>::iterator it;
-
+	eGameType _type;
 private:
 	Image* backGroundImg;
 	RECT testRect;
@@ -23,7 +30,8 @@ private:
 private:
 	int iEnemyStartX;
 	int iEnemyStartY;
-
+private:
+	
 public:
 	GameScene();
 	~GameScene();
@@ -32,5 +40,6 @@ public:
 	void Release();
 	void Update();
 	void Render(HDC hdc);
-
+public:
+	void ChangeType();
 };

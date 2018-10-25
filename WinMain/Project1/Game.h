@@ -38,7 +38,7 @@
 #include "GameNode.h"
 #include "Camera.h"
 #include "Image.h"
-
+#include "StateType.h"
 
 
 // 사용자 정의 매니저
@@ -50,4 +50,4 @@
 #include "SceneManager.h"
 #include "SoundManager.h"
 #include "GameSystem.h"
-
+#include "StateManager.h"

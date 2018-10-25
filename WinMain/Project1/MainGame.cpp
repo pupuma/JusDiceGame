@@ -25,6 +25,9 @@ bool MainGame::Init()
 
 	IMAGEMANAGER->AddFrameImage(TEXT("TestDice"), TEXT("../../Resource/BMP/DiceOff.bmp"), 438, 62, 6, 1, true, COLOR_M);
 
+
+	//
+	STATEMANAGER->StateInit();
 	//// SCENE
 	//SCENEMANAGER->AddScene(TEXT("Start"), new StartScene());
 	//SCENEMANAGER->AddScene(TEXT("Loading"), new LoadingScene());

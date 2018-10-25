@@ -44,9 +44,13 @@ public:
 	void Render(HDC hdc);
 public:
 	void Fire(RECT _rcTarget);
+	void Fire(RECT _rcTarget, POINT _pt);
+
 	void BulletMove(RECT _rcTarget);
 	void ResetPosition();
 	void SetPosition(int _x ,int _y);
+	void SetPosition(POINT _pt);
+	void SetStartPosition(POINT _pt);
 public:
 	bool IsFire() { return isFire; }
 	void SetFire(bool _isFire) { isFire = _isFire; }

@@ -8,6 +8,8 @@ GameScene::GameScene()
 {
 	iEnemyStartX = 0;
 	iEnemyStartY = 0;
+
+	_type = eGameType::GMAE_IDLE;
 }
 
 
@@ -32,15 +34,16 @@ bool GameScene::Init()
 
 	// Game Enemy
 	{
+		int currentY = 0;
 		int iEnemyCount = GAMESYS->GetRound();
-		for (int i = 0; i < iEnemyCount; i++)
+		for (int i = 0; i < 5; i++)
 		{
 			Enemy* enemy = new Enemy();
-			enemy->Init();
+			enemy->Init(currentY);
+			currentY += (10 + enemy->GetHeight());
 			enemyList.push_back(enemy);
 		}
 
-		GAMESYS->SetEnemyList(enemyList);
 	}
 	// GameBoard 
 	{
@@ -52,8 +55,7 @@ bool GameScene::Init()
 	}
 
 	{
-		GAMESYS->SetRound(3);
-		GAMESYS->AddEnemy();
+		//GAMESYS->SetRound(3);
 	}
 	return true;
 }
@@ -64,12 +66,33 @@ void GameScene::Release()
 
 void GameScene::Update()
 {
-	gameBoard->Update();
-
-	for (it = enemyList.begin(); it != enemyList.end(); it++)
+	if (_type == eGameType::GMAE_IDLE)
 	{
-		(*it)->Update();
+		gameBoard->Update();
+
 	}
+	else if (_type == eGameType::GMAE_PLAY)
+	{
+		GAMESYS->SetEnemyList(enemyList);
+		gameBoard->Update();
+		GAMESYS->CollisionEnemy(enemyList);
+
+		//for (it = enemyList.begin(); it != enemyList.end(); it++)
+		//{
+		//	(*it)->Update();
+		//}
+
+
+	}
+	else
+	{
+		//GAMESYS->SetEnemyList(enemyList);
+		//gameBoard->Update();
+
+	}
+
+
+
 }
 
 void GameScene::Render(HDC hdc)
@@ -90,7 +113,7 @@ void GameScene::Render(HDC hdc)
 	{
 		for (it = enemyList.begin(); it != enemyList.end(); it++)
 		{
-			//(*it)->Render(hdc);
+			(*it)->Render(hdc);
 		}
 		//DrawObject(hdc, testRect, 1, RGB(234, 57, 67), ROUNDRECT, 20, 20);
 
