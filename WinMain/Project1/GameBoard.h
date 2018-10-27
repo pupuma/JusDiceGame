@@ -8,14 +8,25 @@
 // 주사위게임 보드 총 개수 
 #define GAMEBOARDSIZE (GAMEBOARDX * GAMEBOARDY)
 
+
+
 class Dice;
+
+
 
 class GameBoard
 {
 private:
-	//Dice* dice[GAMEBOARDSIZE];
+	std::list<std::pair<int, Dice*>> diceList;
+	std::list<std::pair<int, Dice*>>::iterator it;
+	//std::list<std::pair<int, Dice*>>::iterator it_Select;
+	int iSelectNumber;
+
+	TCHAR str[256];
+
 private:
 	RECT rcTest[GAMEBOARDSIZE];
+
 	
 	RECT rcCircle1;
 	RECT rcCircle2[2];
@@ -26,7 +37,7 @@ private:
 
 	// vector?
 	std::vector<RECT> vCircleList;
-	std::vector<Dice*> diceList;
+	//std::vector<Dice*> diceList;
 private:
 	POINT ptGameLine1;
 	POINT ptGameLine2;
@@ -51,7 +62,7 @@ public:
 	bool Init(int _width, int _height);
 	void Update();
 	void Render(HDC hdc);
-private:
-	void RandomColorPull();
+public:
+	RECT GetRectGameBoard() { return rcGameBoard; }
 };
 

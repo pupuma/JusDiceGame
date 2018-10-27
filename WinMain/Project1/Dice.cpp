@@ -7,9 +7,9 @@
 Dice::Dice()
 {
 	diceType = eDiceColor::DICE_NONE;
-	_image = IMAGEMANAGER->FindImage(TEXT("TestDice"));
+	//_image = IMAGEMANAGER->FindImage(TEXT("TestDice"));
 
-	iLevel = 4; 
+	iLevel = 1; 
 	isClick = false;
 
 	// Test
@@ -82,6 +82,7 @@ bool Dice::Init(int _x, int _y, RECT _rcGameBoard)
 	{
 		rcGameBoard = _rcGameBoard;
 		stateType = eStateType::STATE_IDLE;
+		_image = IMAGEMANAGER->FindImage(TEXT("TestDice"));
 	}
 
 	//Bullet Create
@@ -116,7 +117,7 @@ bool Dice::Init(int _x, int _y, RECT _rcGameBoard)
 
 
 		// 이미지 색 
-		_image->SetFrameX(5);
+		_image->SetFrameX((int)diceType);
 
 	}
 
@@ -131,6 +132,67 @@ bool Dice::Init(int _x, int _y, RECT _rcGameBoard)
 
 	//Target
 	
+	return true;
+}
+bool Dice::Init(int _x, int _y, RECT _rcGameBoard, eDiceColor _color)
+{
+
+	{
+		rcGameBoard = _rcGameBoard;
+		stateType = eStateType::STATE_IDLE;
+		_image = new Image();
+		
+		//_image = IMAGEMANAGER->FindImage(TEXT("TestDice"));
+		_image->Init(TEXT("../../Resource/BMP/DiceOff.bmp"), 438, 62, 6, 1, true, COLOR_M);
+	}
+
+	//Bullet Create
+	{
+		for (int i = 0; i < MAXBULLET; i++)
+		{
+			//bullet[i] = new Bullet();
+			Bullet* bullet = new Bullet();
+			bulletList.push_back(bullet);
+		}
+
+		//for (int i = 0; i < MAXBULLET; i++)
+		//{
+		//	bulletList[i]->Fire(targetRect);
+		//}
+
+	}
+	// Init
+	{
+		iDiceWidth = 73;
+		iDiceHeight = 60;
+
+
+		ptDiceCenterPos.x = _x;
+		ptDiceCenterPos.y = _y;
+
+		rcDice = RectMakeCenter(ptDiceCenterPos.x, ptDiceCenterPos.y, iDiceWidth, iDiceHeight);
+
+
+		_image->SetX(rcDice.left);
+		_image->SetY(rcDice.top);
+
+
+		// 이미지 색 
+		diceType = _color;
+		_image->SetFrameX((diceType));
+
+	}
+
+	// 총알 위치 -> 
+	{
+		ptDicePos.x = _x - iDiceWidth / 2;
+		ptDicePos.y = _y - iDiceHeight / 2;
+
+		DiceLevelBullet(GetDiceLevel(), ptDicePos.x, ptDicePos.y);
+	}
+
+
+
 	return true;
 }
 void Dice::Update()
@@ -777,5 +839,11 @@ void Dice::DiceFirePos(int _level, int _x, int _y)
 	break;
 
 	}
+}
+
+void Dice::SetColor(eDiceColor _color)
+{
+	 diceType = _color; 
+	 _image->SetFrameX(diceType);
 }
 

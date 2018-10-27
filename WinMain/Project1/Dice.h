@@ -8,12 +8,12 @@ class State;
 enum eDiceColor
 {
 	DICE_NONE,
-	DICE_RED,
-	DICE_YELLOW,
 	DICE_BLUE,
+	DICE_RED,
 	DICE_GREEN,
-	DICE_BLACK,
+	DICE_YELLOW,
 	DICE_GRAY,
+	DICE_BLACK,
 };
 
 class Dice
@@ -69,6 +69,8 @@ public:
 	bool Init();
 	bool Init(int _x, int _y);
 	bool Init(int _x, int _y, RECT _rcGameBoard);
+	bool Init(int _x, int _y, RECT _rcGameBoard, eDiceColor _color);
+
 	void Update();
 	void Render(HDC hdc);
 public:
@@ -78,6 +80,7 @@ public:
 	void LevelDiceRender(HDC hdc);
 	POINT DiceStartFirePos(int _level, int _x, int _y);
 	void DiceFirePos(int _level, int _x, int _y);
+	void SetColor(eDiceColor _color);
 
 
 	

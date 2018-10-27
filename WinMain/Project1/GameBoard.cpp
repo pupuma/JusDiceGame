@@ -8,6 +8,13 @@ GameBoard::GameBoard()
 {
 	iIndex = 0;
 	isClicked = false;
+
+	iDiceStartX = 148;
+	iDiceStartY = 237;
+
+	iDiceWidth = 73;
+	iDiceHeight = 60;
+	iSelectNumber = -1;
 }
 
 
@@ -28,65 +35,66 @@ bool GameBoard::Init()
 		int iGameBoardCenterX = iGameBoardX + iGameBoardWidth / 2;
 		int iGameBoardCenterY = iGameBoardY + iGameBoardHeight / 2;
 		rcGameBoard = RectMakeCenter(iGameBoardCenterX, iGameBoardCenterY, iGameBoardWidth, iGameBoardHeight);
+		GAMESYS->SetRectGameBoard(rcGameBoard);
 	}
 
 	// GameBoard Dice Position Info  
-	{
-		//iDiceStartX = 113;
-		//iDiceStartY = 207;
-		
-		iDiceStartX = 148;
-		iDiceStartY = 237;
+	//{
+	//	//iDiceStartX = 113;
+	//	//iDiceStartY = 207;
+	//	
+	//	iDiceStartX = 148;
+	//	iDiceStartY = 237;
 
-		iDiceWidth = 73;
-		iDiceHeight = 60;
-		
-		int x = iDiceStartX;
-		int y = iDiceStartY;
+	//	iDiceWidth = 73;
+	//	iDiceHeight = 60;
+	//	
+	//	int x = iDiceStartX;
+	//	int y = iDiceStartY;
 
-		int temp = 0;
-		//for (int i = 0; i < GAMEBOARDX; i++)
-		//{
-		//	for (int j = 0; j < GAMEBOARDY; j++)
-		//	{
-		//		rcTest[temp] = RectMakeCenter(x, y, iDiceWidth, iDiceHeight);
-		//		dice[temp] = new Dice();
-		//		if (!(dice[temp]->Init(x, y,rcGameBoard)))
-		//		{
-		//			return false;
-		//		}
-		//		x = x + iDiceWidth + 2;
+	//	int temp = 0;
+	//	//for (int i = 0; i < GAMEBOARDX; i++)
+	//	//{
+	//	//	for (int j = 0; j < GAMEBOARDY; j++)
+	//	//	{
+	//	//		rcTest[temp] = RectMakeCenter(x, y, iDiceWidth, iDiceHeight);
+	//	//		dice[temp] = new Dice();
+	//	//		if (!(dice[temp]->Init(x, y,rcGameBoard)))
+	//	//		{
+	//	//			return false;
+	//	//		}
+	//	//		x = x + iDiceWidth + 2;
 
-		//		temp++;
-		//	}
-		//	x = iDiceStartX;
-		//	y = y + iDiceHeight + 2 ;
-		//}
+	//	//		temp++;
+	//	//	}
+	//	//	x = iDiceStartX;
+	//	//	y = y + iDiceHeight + 2 ;
+	//	//}
 
-		for (int i = 0; i < GAMEBOARDX; i++)
-		{
-			for (int j = 0; j < GAMEBOARDY; j++)
-			{
-				//rcTest[temp] = RectMakeCenter(x, y, iDiceWidth, iDiceHeight);
-				//dice[temp] = new Dice();
-				Dice* dice = new Dice();
+	//	for (int i = 0; i < GAMEBOARDX; i++)
+	//	{
+	//		for (int j = 0; j < GAMEBOARDY; j++)
+	//		{
+	//			//rcTest[temp] = RectMakeCenter(x, y, iDiceWidth, iDiceHeight);
+	//			//dice[temp] = new Dice();
+	//			Dice* dice = new Dice();
 
-				if (!(dice->Init(x, y, rcGameBoard)))
-				{
-					return false;
-				}
-				diceList.push_back(dice);
+	//			if (!(dice->Init(x, y, rcGameBoard)))
+	//			{
+	//				return false;
+	//			}
+	//			diceList.push_back(dice);
 
-				x = x + iDiceWidth + 2;
+	//			x = x + iDiceWidth + 2;
 
-				temp++;
-			}
-			x = iDiceStartX;
-			y = y + iDiceHeight + 2;
-		}
+	//			temp++;
+	//		}
+	//		x = iDiceStartX;
+	//		y = y + iDiceHeight + 2;
+	//	}
 
 
-	}
+	//}
 
 
 
@@ -197,6 +205,9 @@ bool GameBoard::Init()
 
 	}
 
+	// Save DIce Position 
+
+
 	return true;
 }
 
@@ -206,78 +217,177 @@ bool GameBoard::Init(int _width, int _height)
 }
 void GameBoard::Update()
 {
-	GetCursorPos(&_ptMouse);
-	ScreenToClient(_hWnd, &_ptMouse);
-
-
-	for (int i = 0; i < GAMEBOARDSIZE; i++)
+	// GameSystem Init(); 
 	{
-		if (PtInRect(&diceList[i]->GetRectDice(), _ptMouse))
+		diceList = GAMESYS->GetDiceList();
+		
+	}
+
+
+	// DiceSelect Contrl
+	{
+		GetCursorPos(&_ptMouse);
+		ScreenToClient(_hWnd, &_ptMouse);
+
+		if (!diceList.empty())
 		{
-			if (KEYMANAGER->IsOnceKeyDown(VK_LBUTTON) && diceList[i]->IsClick() == false)
+			if (KEYMANAGER->IsOnceKeyDown(VK_LBUTTON))
 			{
+				for (it = diceList.begin(); it != diceList.end(); it++)
+				{
+					if (PtInRect(&(*it).second->GetRectDice(), _ptMouse) && (*it).second->IsClick() == false)
+					{
+						iSelectNumber = it->first;
+						_ptSave = (*it).second->GetDiceCenterPosition();
+						(*it).second->SetClick(true);
+						isClicked = true;
 
-				iIndex = i;
-				_ptSave = diceList[iIndex]->GetDiceCenterPosition();
+						break;
+					}
+				}
+			}
 
-				diceList[iIndex]->SetClick(true);
-				isClicked = true;
-				break;
+		}	
 
+
+	}
+
+	{
+		GetCursorPos(&_ptMouse);
+		ScreenToClient(_hWnd, &_ptMouse);
+
+		if (!diceList.empty())
+		{
+			if (KEYMANAGER->IsStayKeyDown(VK_LBUTTON))
+			{
+				for (it = diceList.begin(); it != diceList.end(); it++)
+				{
+					if (iSelectNumber == it->first)
+					{
+						(*it).second->SetDicePosition(_ptMouse);
+						break;
+					}
+				}
+			}
+		}
+
+	}
+
+	{
+		if (!diceList.empty())
+		{
+			if (KEYMANAGER->IsOnceKeyUp(VK_LBUTTON))
+			{
+				for (it = diceList.begin(); it != diceList.end(); it++)
+				{
+					if (it->first == iSelectNumber)
+					{
+						if (!isClicked)
+						{
+							(*it).second->SetClick(false);
+							//dice[iIndex]->SetDicePosition(_);
+						}
+						else
+						{
+							(*it).second->SetClick(false);
+							(*it).second->SetDicePosition(_ptSave);
+						}
+						iSelectNumber = -1;
+						break;
+					}
+				}
+				
 			}
 		}
 	}
-	
 
 
-	GetCursorPos(&_ptMouse);
-	ScreenToClient(_hWnd, &_ptMouse);
-	
-	
-	if (PtInRect(&diceList[iIndex]->GetRectDice(), _ptMouse))
 	{
-		if (KEYMANAGER->IsStayKeyDown(VK_LBUTTON))
+		if (!diceList.empty())
 		{
-
-
-			//ptDiceCenterPos.x += (_ptMouse.x - _ptSave.x);
-			//ptDiceCenterPos.y += (_ptMouse.y - _ptSave.y);
-			if (diceList[iIndex]->IsClick() == true)
+			for (it = diceList.begin(); it != diceList.end(); it++)
 			{
-
-				//ptDiceCenterPos.x = _ptMouse.x;
-				//ptDiceCenterPos.y = _ptMouse.y;
-				diceList[iIndex]->SetDicePosition(_ptMouse);
+				(*it).second->Update();
 			}
-
-		}
-
-	}
-
-
-	if (KEYMANAGER->IsOnceKeyUp(VK_LBUTTON))
-	{
-		if (!isClicked)
-		{
-			diceList[iIndex]->SetClick(false);
-			//dice[iIndex]->SetDicePosition(_);
-		}
-		else
-		{
-			diceList[iIndex]->SetClick(false);
-			diceList[iIndex]->SetDicePosition(_ptSave);
 		}
 		
-		
-
 	}
+	//{
+	//	GetCursorPos(&_ptMouse);
+	//	ScreenToClient(_hWnd, &_ptMouse);
 
 
 
-	for (int i = 0; i < GAMEBOARDSIZE; i++)
-	{
-		diceList[i]->Update();
-	}
+	//	for (int i = 0; i < GAMEBOARDSIZE; i++)
+	//	{
+	//		if (PtInRect(&diceList[i]->GetRectDice(), _ptMouse))
+	//		{
+	//			if (KEYMANAGER->IsOnceKeyDown(VK_LBUTTON) && diceList[i]->IsClick() == false)
+	//			{
+
+	//				iIndex = i;
+	//				_ptSave = diceList[iIndex]->GetDiceCenterPosition();
+
+	//				diceList[iIndex]->SetClick(true);
+	//				isClicked = true;
+	//				break;
+
+	//			}
+	//		}
+	//	}
+
+
+
+	//	GetCursorPos(&_ptMouse);
+	//	ScreenToClient(_hWnd, &_ptMouse);
+
+
+	//	if (PtInRect(&diceList[iIndex]->GetRectDice(), _ptMouse))
+	//	{
+	//		if (KEYMANAGER->IsStayKeyDown(VK_LBUTTON))
+	//		{
+
+
+	//			//ptDiceCenterPos.x += (_ptMouse.x - _ptSave.x);
+	//			//ptDiceCenterPos.y += (_ptMouse.y - _ptSave.y);
+	//			if (diceList[iIndex]->IsClick() == true)
+	//			{
+
+	//				//ptDiceCenterPos.x = _ptMouse.x;
+	//				//ptDiceCenterPos.y = _ptMouse.y;
+	//				diceList[iIndex]->SetDicePosition(_ptMouse);
+	//			}
+
+	//		}
+
+	//	}
+
+
+	//	if (KEYMANAGER->IsOnceKeyUp(VK_LBUTTON))
+	//	{
+	//		if (!isClicked)
+	//		{
+	//			diceList[iIndex]->SetClick(false);
+	//			//dice[iIndex]->SetDicePosition(_);
+	//		}
+	//		else
+	//		{
+	//			diceList[iIndex]->SetClick(false);
+	//			diceList[iIndex]->SetDicePosition(_ptSave);
+	//		}
+
+
+
+	//	}
+
+	//}
+	//
+
+
+	//for (int i = 0; i < GAMEBOARDSIZE; i++)
+	//{
+	//	diceList[i]->Update();
+	//}
 
 	//dice[0]->Update();
 	//dice[5]->Update();
@@ -305,6 +415,43 @@ void GameBoard::Render(HDC hdc)
 
 	}
 
+	{
+
+		//for (int i = 0; i < GAMEBOARDSIZE; i++)
+		//{	
+		//	if (i != iIndex)
+		//	{
+		//		diceList[i]->Render(hdc);
+		//	}
+		//}
+		//diceList[iIndex]->Render(hdc);
+
+		if (!diceList.empty())
+		{
+			for (it = diceList.begin(); it != diceList.end(); it++)
+			{
+				(*it).second->Render(hdc);
+				
+				int index = it->first;
+				_stprintf(str, TEXT("Test : %5d"), index);
+				TextOut(hdc, 10, 0, str, _tcslen(str));
+			}
+
+			// Select
+			for (it = diceList.begin(); it != diceList.end(); it++)
+			{
+				if (it->first == iSelectNumber)
+				{
+					(*it).second->Render(hdc);
+					break;
+				}
+			}
+			//DrawObject(hdc, (*it_Select).second->GetRectDice(), 1, RGB(255, 0, 0), RECTANGLE);
+
+		}
+
+		
+	}
 	
 	{
 		//for (int i = 0; i < GAMEBOARDSIZE; i++)
@@ -362,14 +509,14 @@ void GameBoard::Render(HDC hdc)
 	{
 		//testDice->Render(hdc);
 
-		for (int i = 0; i < GAMEBOARDSIZE; i++)
-		{	
-			if (i != iIndex)
-			{
-				diceList[i]->Render(hdc);
-			}
-		}
-		diceList[iIndex]->Render(hdc);
+		//for (int i = 0; i < GAMEBOARDSIZE; i++)
+		//{	
+		//	if (i != iIndex)
+		//	{
+		//		diceList[i]->Render(hdc);
+		//	}
+		//}
+		//diceList[iIndex]->Render(hdc);
 
 		//dice[0]->Render(hdc);
 		//dice[5]->Render(hdc);

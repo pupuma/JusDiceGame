@@ -3,6 +3,7 @@
 #include "GameBoard.h"
 
 #include "Enemy.h"
+#include "DiceCreateButton.h"
 
 GameScene::GameScene()
 {
@@ -20,7 +21,7 @@ GameScene::~GameScene()
 bool GameScene::Init()
 {
 	// 게임 배경 이미지 
-	backGroundImg = IMAGEMANAGER->AddImage(TEXT("StartBack1"), TEXT("../../Resource/BMP//GameScene.bmp"), WINSIZEX, WINSIZEY, false, COLOR_M);
+	backGroundImg = IMAGEMANAGER->AddImage(TEXT("StartBack1"), TEXT("../../Resource/BMP/GameScene.bmp"), WINSIZEX, WINSIZEY, false, COLOR_M);
 	
 	//---------Test
 	iStartX = 113;
@@ -57,6 +58,12 @@ bool GameScene::Init()
 	{
 		//GAMESYS->SetRound(3);
 	}
+
+	// Dice Create Button
+	{
+		dcButtom = new DiceCreateButton();
+		dcButtom->Init();
+	}
 	return true;
 }
 
@@ -66,6 +73,13 @@ void GameScene::Release()
 
 void GameScene::Update()
 {
+
+
+	{
+		dcButtom->Update();
+	}
+
+
 	if (_type == eGameType::GMAE_IDLE)
 	{
 		gameBoard->Update();
@@ -90,6 +104,7 @@ void GameScene::Update()
 		//gameBoard->Update();
 
 	}
+
 
 
 
@@ -120,6 +135,10 @@ void GameScene::Render(HDC hdc)
 	}
 	
 
+	// Dice Create Buttom Draw
+	{
+		dcButtom->Render(hdc);
+	}
 	
 	// 도형 그리기 
 	//RoundRect(hdc, testRect.left, testRect.top, testRect.right, testRect.bottom, 30, 30);

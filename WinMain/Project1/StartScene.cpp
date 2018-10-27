@@ -16,7 +16,8 @@ StartScene::~StartScene()
 bool StartScene::Init()
 {
 	//rc = RectMakeCenter(WINSIZEX / 2, WINSIZEY / 2, 100, 100);
-	back = IMAGEMANAGER->AddFrameImage(TEXT("background"), TEXT("../Resource/Sprite/background.bmp"), WINSIZEX, WINSIZEY, 1, 1, false, RGB(0, 0, 0));
+	//back = IMAGEMANAGER->AddFrameImage(TEXT("background"), TEXT("../Resource/Sprite/background.bmp"), WINSIZEX, WINSIZEY, 1, 1, false, RGB(0, 0, 0));
+	back = IMAGEMANAGER->AddImage(TEXT("StartBack1"), TEXT("../../Resource/BMP//GameScene.bmp"), WINSIZEX, WINSIZEY, false, COLOR_M);
 
 	IMAGEMANAGER->AddFrameImage(TEXT("Button01"), TEXT("../Resource/SpaceShip/button1.bmp"),
 		0, 0, 122, 62, 1, 2, true, RGB(255, 0, 255));
@@ -58,5 +59,5 @@ void StartScene::Render(HDC hdc)
 
 void StartScene::CbScreneChange()
 {
-	SCENEMANAGER->ChangeScene(TEXT("Loading"));
+	SCENEMANAGER->ChangeScene(TEXT("InGame"));
 }

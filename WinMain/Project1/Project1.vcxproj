@@ -151,6 +151,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CollisionFunction.cpp" />
     <ClCompile Include="Dice.cpp" />
+    <ClCompile Include="DiceCreateButton.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="EffectManager.cpp" />
     <ClCompile Include="Enemy.cpp" />
@@ -186,6 +187,7 @@
     <ClInclude Include="commonMacroFunction.h" />
     <ClInclude Include="CustomDefine.h" />
     <ClInclude Include="Dice.h" />
+    <ClInclude Include="DiceCreateButton.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="EffectManager.h" />
     <ClInclude Include="Enemy.h" />

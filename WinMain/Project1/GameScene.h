@@ -2,6 +2,7 @@
 
 class GameBoard;
 class Enemy;
+class DiceCreateButton;
 
 enum eGameType
 {
@@ -16,6 +17,8 @@ class GameScene
 private:
 	GameBoard* gameBoard;
 	Enemy* enemy;
+	DiceCreateButton* dcButtom;
+
 	std::list<Enemy*> enemyList;
 	std::list<Enemy*>::iterator it;
 	eGameType _type;

@@ -79,6 +79,9 @@
     <Filter Include="MainGame\State">
       <UniqueIdentifier>{23f01655-0ad7-441a-80d6-02291360d263}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MainGame\02.Object\GameButton">
+      <UniqueIdentifier>{0928bd06-4670-4323-9a46-f732b339db09}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinMain.cpp">
@@ -174,6 +177,9 @@
     <ClCompile Include="StateManager.cpp">
       <Filter>2DFrameWork\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="DiceCreateButton.cpp">
+      <Filter>MainGame\02.Object\GameButton</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameNode.h">
@@ -257,9 +263,6 @@
     <ClInclude Include="GameBoard.h">
       <Filter>MainGame\02.Object\GameBoard</Filter>
     </ClInclude>
-    <ClInclude Include="commonMacroFunction.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="GameSystem.h">
       <Filter>2DFrameWork\System</Filter>
     </ClInclude>
@@ -286,6 +289,12 @@
     </ClInclude>
     <ClInclude Include="StateManager.h">
       <Filter>2DFrameWork\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="commonMacroFunction.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DiceCreateButton.h">
+      <Filter>MainGame\02.Object\GameButton</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
