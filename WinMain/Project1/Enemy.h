@@ -20,6 +20,18 @@ private:
 	int iNomalHeight;
 	int iBossWidth;
 	int iBossHeight;
+	int iColorR;
+	int iColorG;
+	int iColorB;
+	int iMoveSpeed;
+
+private:
+	POINT ptDestPos1;
+	POINT ptDestPos2;
+	POINT ptDestPos3;
+
+	POINT ptCurrentPos;
+
 private:
 	RECT rcEnemy;
 	eEnemyType enemyType;
@@ -32,10 +44,15 @@ public:
 	void Update();
 	void Render(HDC hdc);
 public:
-	
+	void EnemyAI();
+	void DrawFont(HDC hdc);
+	void DreaseHp(int _attackPoint);
 public:
 	RECT GetEnemyRect() { return rcEnemy; }
 	int GetHeight() { return iNomalHeight; }
+	int GetPosX() { return iStartX; }
+	int GetPosY() { return iStartY; }
+	int GetHp() { return iHp; }
 
 };
 

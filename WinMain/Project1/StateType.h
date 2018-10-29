@@ -1,0 +1,12 @@
+#pragma once
+
+
+enum eStateType
+{
+	STATE_NONE,
+	STATE_IDLE,
+	STATE_MOVE,
+	STATE_ATTACK,
+	STATE_SUFFER,
+	STATE_DIE,
+};

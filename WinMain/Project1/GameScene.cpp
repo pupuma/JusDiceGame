@@ -10,7 +10,7 @@ GameScene::GameScene()
 	iEnemyStartX = 0;
 	iEnemyStartY = 0;
 
-	_type = eGameType::GMAE_IDLE;
+	_type = eGameType::GMAE_PLAY;
 }
 
 
@@ -32,31 +32,52 @@ bool GameScene::Init()
 	testRect2 = RectMakeCenter(150, 237, 73, 60);
 	testRect = RectMakeCenter(59, 60, 54, 44);
 	// Game Line Init 
-
-	// Game Enemy
 	{
-		int currentY = 0;
-		int iEnemyCount = GAMESYS->GetRound();
-		for (int i = 0; i < 5; i++)
-		{
-			Enemy* enemy = new Enemy();
-			enemy->Init(currentY);
-			currentY += (10 + enemy->GetHeight());
-			enemyList.push_back(enemy);
-		}
+		ptGameLine1 = { 59, 0 };
+		ptGameLine2 = { 59, 558 };
+		ptGameLine3 = { 540, 558 };
+		ptGameLine4 = { 540, 0 };
 
-	}
+		std::vector<POINT> gameLineList;
+
+		gameLineList.push_back(ptGameLine1);
+		gameLineList.push_back(ptGameLine2);
+		gameLineList.push_back(ptGameLine3);
+		gameLineList.push_back(ptGameLine4);
+
+		GAMESYS->SetGameLine(gameLineList);
+
+
+	}	
+
 	// GameBoard 
 	{
 		gameBoard = new GameBoard();
 		if (!gameBoard->Init())
 		{
-			return false; 
+			return false;
 		}
+
 	}
+	// Game Enemy
+	{
+		int currentY = -300;
+		int iEnemyCount = GAMESYS->GetRound();
+		for (int i = 0; i < 6; i++)
+		{
+			Enemy* enemy = new Enemy();
+			enemy->Init(currentY);
+			currentY -= (10 + enemy->GetHeight());
+			enemyList.push_back(enemy);
+		}
+
+	}
+	
 
 	{
 		//GAMESYS->SetRound(3);
+
+		GAMESYS->SetEnemyList(enemyList);
 	}
 
 	// Dice Create Button
@@ -82,20 +103,28 @@ void GameScene::Update()
 
 	if (_type == eGameType::GMAE_IDLE)
 	{
+		GAMESYS->SetEnemyList(enemyList);
+		//GAMESYS->CollisionEnemy(enemyList);
+		for (it = enemyList.begin(); it != enemyList.end(); it++)
+		{
+			//(*it)->Update();
+		}
 		gameBoard->Update();
+
 
 	}
 	else if (_type == eGameType::GMAE_PLAY)
 	{
-		GAMESYS->SetEnemyList(enemyList);
+		enemyList = GAMESYS->GetEnemyList();
 		gameBoard->Update();
-		GAMESYS->CollisionEnemy(enemyList);
+		//GAMESYS->CollisionEnemy(enemyList);
 
-		//for (it = enemyList.begin(); it != enemyList.end(); it++)
-		//{
-		//	(*it)->Update();
-		//}
+		for (it = enemyList.begin(); it != enemyList.end(); it++)
+		{
+			(*it)->Update();
+		}
 
+		GAMESYS->CollisionObject(enemyList);
 
 	}
 	else
@@ -119,10 +148,15 @@ void GameScene::Render(HDC hdc)
 
 	}
 	
-
+	// Draw Game Line 
 	{
-		gameBoard->Render(hdc);
+		DrawLine(hdc, ptGameLine1, ptGameLine2, 2, RGB(0, 0, 0));
+		DrawLine(hdc, ptGameLine2, ptGameLine3, 2, RGB(0, 0, 0));
+		DrawLine(hdc, ptGameLine3, ptGameLine4, 2, RGB(0, 0, 0));
+
 	}
+
+	
 	
 	// Enemy
 	{
@@ -134,6 +168,9 @@ void GameScene::Render(HDC hdc)
 
 	}
 	
+	{
+		gameBoard->Render(hdc);
+	}
 
 	// Dice Create Buttom Draw
 	{

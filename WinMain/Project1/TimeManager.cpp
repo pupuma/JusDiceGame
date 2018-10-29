@@ -43,13 +43,13 @@ void TimeManager::Render(HDC hdc)
 #if defined(_DEBUG)
 	{
 		_stprintf(str, TEXT("Frame Per Sec : %d"), _timer->GetFrameRate());
-		TextOut(hdc, 0, 0, str, _tcslen(str));
+		TextOut(hdc, 100, 0, str, _tcslen(str));
 
 		_stprintf(str, TEXT("World Time : %f"), _timer->GetWorldTime());
-		TextOut(hdc, 0, 20, str, _tcslen(str));
+		TextOut(hdc, 100, 20, str, _tcslen(str));
 
 		_stprintf(str, TEXT("Elapsed Time : %f"), _timer->GetElapsedTime());
-		TextOut(hdc, 0, 40, str, _tcslen(str));
+		TextOut(hdc, 100, 40, str, _tcslen(str));
 	}
 #else
 	_stprintf(str, TEXT("Frame Per Sec : %d"), _timer->getFrameRate());

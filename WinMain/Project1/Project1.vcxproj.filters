@@ -82,6 +82,12 @@
     <Filter Include="MainGame\02.Object\GameButton">
       <UniqueIdentifier>{0928bd06-4670-4323-9a46-f732b339db09}</UniqueIdentifier>
     </Filter>
+    <Filter Include="2DFrameWork\Font">
+      <UniqueIdentifier>{c61d3ab6-eecc-4162-9309-0c713580af91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MainGame\02.Object\Character\Dice\DiceType">
+      <UniqueIdentifier>{f4d4571b-ece8-4f7e-b3b7-6ffd9c2c83cf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinMain.cpp">
@@ -179,6 +185,24 @@
     </ClCompile>
     <ClCompile Include="DiceCreateButton.cpp">
       <Filter>MainGame\02.Object\GameButton</Filter>
+    </ClCompile>
+    <ClCompile Include="RedDice.cpp">
+      <Filter>MainGame\02.Object\Character\Dice\DiceType</Filter>
+    </ClCompile>
+    <ClCompile Include="BlackDice.cpp">
+      <Filter>MainGame\02.Object\Character\Dice\DiceType</Filter>
+    </ClCompile>
+    <ClCompile Include="GreenDice.cpp">
+      <Filter>MainGame\02.Object\Character\Dice\DiceType</Filter>
+    </ClCompile>
+    <ClCompile Include="GrayDice.cpp">
+      <Filter>MainGame\02.Object\Character\Dice\DiceType</Filter>
+    </ClCompile>
+    <ClCompile Include="BlueDice.cpp">
+      <Filter>MainGame\02.Object\Character\Dice\DiceType</Filter>
+    </ClCompile>
+    <ClCompile Include="YellowDice.cpp">
+      <Filter>MainGame\02.Object\Character\Dice\DiceType</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -295,6 +319,24 @@
     </ClInclude>
     <ClInclude Include="DiceCreateButton.h">
       <Filter>MainGame\02.Object\GameButton</Filter>
+    </ClInclude>
+    <ClInclude Include="RedDice.h">
+      <Filter>MainGame\02.Object\Character\Dice\DiceType</Filter>
+    </ClInclude>
+    <ClInclude Include="BlackDice.h">
+      <Filter>MainGame\02.Object\Character\Dice\DiceType</Filter>
+    </ClInclude>
+    <ClInclude Include="BlueDice.h">
+      <Filter>MainGame\02.Object\Character\Dice\DiceType</Filter>
+    </ClInclude>
+    <ClInclude Include="YellowDice.h">
+      <Filter>MainGame\02.Object\Character\Dice\DiceType</Filter>
+    </ClInclude>
+    <ClInclude Include="GrayDice.h">
+      <Filter>MainGame\02.Object\Character\Dice\DiceType</Filter>
+    </ClInclude>
+    <ClInclude Include="GreenDice.h">
+      <Filter>MainGame\02.Object\Character\Dice\DiceType</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

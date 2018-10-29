@@ -33,10 +33,12 @@ private:
 	bool isCollision;
 private:
 	float fSpeed;
+	int iDamage;
 private:
 	RECT rcBullet;
+	COLORREF color;
 public:
-	Bullet();
+	Bullet(COLORREF _color);
 	~Bullet();
 public:
 	bool Init(int _x, int _y);
@@ -65,6 +67,7 @@ public:
 
 	bool IsCollision() { return isCollision; }
 	void SetCollision(bool _isCollision) { isCollision = _isCollision; }
-
+	int GetDamage() { return iDamage; }
+	void SetDamage(int _damage) { iDamage = _damage; }
 };
 

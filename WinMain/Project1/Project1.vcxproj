@@ -72,6 +72,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -93,6 +95,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -146,6 +149,8 @@
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AttackState.cpp" />
     <ClCompile Include="BackBuffer.cpp" />
+    <ClCompile Include="BlackDice.cpp" />
+    <ClCompile Include="BlueDice.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -159,6 +164,8 @@
     <ClCompile Include="GameNode.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GameSystem.cpp" />
+    <ClCompile Include="GrayDice.cpp" />
+    <ClCompile Include="GreenDice.cpp" />
     <ClCompile Include="IdleState.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="ImageManager.cpp" />
@@ -166,6 +173,7 @@
     <ClCompile Include="LoadingScene.cpp" />
     <ClCompile Include="MainGame.cpp" />
     <ClCompile Include="ProgressBar.cpp" />
+    <ClCompile Include="RedDice.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="StartScene.cpp" />
@@ -175,11 +183,14 @@
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Util.cpp" />
     <ClCompile Include="WinMain.cpp" />
+    <ClCompile Include="YellowDice.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AttackState.h" />
     <ClInclude Include="BackBuffer.h" />
+    <ClInclude Include="BlackDice.h" />
+    <ClInclude Include="BlueDice.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />
@@ -196,6 +207,8 @@
     <ClInclude Include="GameNode.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="GameSystem.h" />
+    <ClInclude Include="GrayDice.h" />
+    <ClInclude Include="GreenDice.h" />
     <ClInclude Include="IdleState.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="ImageManager.h" />
@@ -205,6 +218,7 @@
     <ClInclude Include="MainGame.h" />
     <ClInclude Include="ProgressBar.h" />
     <ClInclude Include="RandomFunction.h" />
+    <ClInclude Include="RedDice.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SingletonBase.h" />
     <ClInclude Include="SoundManager.h" />
@@ -215,6 +229,7 @@
     <ClInclude Include="TimeManager.h" />
     <ClInclude Include="Util.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="YellowDice.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

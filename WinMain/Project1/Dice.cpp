@@ -1,4 +1,5 @@
 #include "Game.h"
+
 #include "Dice.h"
 
 #include "Bullet.h"
@@ -9,15 +10,18 @@ Dice::Dice()
 	diceType = eDiceColor::DICE_NONE;
 	//_image = IMAGEMANAGER->FindImage(TEXT("TestDice"));
 
-	iLevel = 1; 
+	iLevel =1; 
 	isClick = false;
-
+	iAttackPoint = 5;
 	// Test
 	//targetRect = RectMakeCenter(59, 60, 54, 44);
 
 	fCoolTime = 3.0f;
 	iIndex = 0;
 	stateType = eStateType::STATE_NONE;
+	iDiceIndex = 0;
+	color = RGB(0, 0, 0);
+
 }
 
 
@@ -82,7 +86,10 @@ bool Dice::Init(int _x, int _y, RECT _rcGameBoard)
 	{
 		rcGameBoard = _rcGameBoard;
 		stateType = eStateType::STATE_IDLE;
-		_image = IMAGEMANAGER->FindImage(TEXT("TestDice"));
+		_image = new Image();
+
+		//_image = IMAGEMANAGER->FindImage(TEXT("TestDice"));
+		_image->Init(TEXT("../../Resource/BMP/DiceOff.bmp"), 438, 62, 6, 1, true, COLOR_M);
 	}
 
 	//Bullet Create
@@ -90,7 +97,7 @@ bool Dice::Init(int _x, int _y, RECT _rcGameBoard)
 		for (int i = 0; i < MAXBULLET; i++)
 		{
 			//bullet[i] = new Bullet();
-			Bullet* bullet = new Bullet();
+			Bullet* bullet = new Bullet(color);
 			bulletList.push_back(bullet);
 		}
 
@@ -151,14 +158,11 @@ bool Dice::Init(int _x, int _y, RECT _rcGameBoard, eDiceColor _color)
 		for (int i = 0; i < MAXBULLET; i++)
 		{
 			//bullet[i] = new Bullet();
-			Bullet* bullet = new Bullet();
+			Bullet* bullet = new Bullet(color);
 			bulletList.push_back(bullet);
 		}
 
-		//for (int i = 0; i < MAXBULLET; i++)
-		//{
-		//	bulletList[i]->Fire(targetRect);
-		//}
+
 
 	}
 	// Init
@@ -231,86 +235,68 @@ void Dice::Update()
 
 		}
 
-
-#if defined(_DEBUG_TEST)
-#else
-
-		
 		{
-			//DiceLevelBullet(GetDiceLevel(), rcDice.left, rcDice.top);
-
-			//
-			//fCoolTime -= TIMEMANAGER->GetElapsedTime();
-			//if (fCoolTime <= 0)
-			//{
-			//	for (int i = 0; i < iLevel; i++)
-			//	{
-			//		if (!bulletList[i]->IsFire())
-			//		{
-			//			bulletList[i]->Fire(targetRect);
-			//			break;
-			//		}
-			//	}
-			//	fCoolTime = 0;
-			//}
-
+			if (GAMESYS->IsEnemyActivate())
 			{
-				rcTarget = GAMESYS->GetRectEnemy();
-
-			}
-
-			// 마우스 위치에 따라 변경 되는 총알 위치 
-			{
-			}
-
-			if (!bulletList[0]->IsFire() &&
-				!bulletList[1]->IsFire() &&
-				!bulletList[2]->IsFire() &&
-				!bulletList[3]->IsFire() &&
-				!bulletList[4]->IsFire() &&
-				!bulletList[5]->IsFire())
-			{
-				ptSave = DiceStartFirePos(GetDiceLevel(), rcDice.left, rcDice.top);
-				bulletList[0]->Fire(rcTarget, ptSave);
-			}
-
-			DiceFirePos(GetDiceLevel(), rcDice.left, rcDice.top);
-			
-			for (int i = 0; i < MAXBULLET; i++)
-			{
-				if (bulletList[i]->IsFire())
+				if (!GAMESYS->IsEnemyEmpty())
 				{
-					bulletList[i]->BulletMove(rcTarget);
-					break;
+					rcTarget = GAMESYS->GetRectEnemy();
 				}
 
 			}
+		}
 
-
-			// Collision
-			for (int i = 0; i < MAXBULLET; i++)
+		{
+			if (!GAMESYS->IsEnemyEmpty())
 			{
-				if (bulletList[i]->IsFire())
+				if (GAMESYS->IsEnemyActivate())
 				{
-					if (GAMESYS->CollisionBullet((bulletList[i]), rcTarget))
+
+					if (!bulletList[0]->IsFire() &&
+						!bulletList[1]->IsFire() &&
+						!bulletList[2]->IsFire() &&
+						!bulletList[3]->IsFire() &&
+						!bulletList[4]->IsFire() &&
+						!bulletList[5]->IsFire())
 					{
-						iIndex++;
-
-						if (iIndex == iLevel)
+						if (!bulletList[0]->IsCollision() &&
+							!bulletList[1]->IsCollision() &&
+							!bulletList[2]->IsCollision() &&
+							!bulletList[3]->IsCollision() &&
+							!bulletList[4]->IsCollision() &&
+							!bulletList[5]->IsCollision())
 						{
-							iIndex = 0;
+							iDiceIndex = 0;
+							ptSave = DiceStartFirePos(GetDiceLevel(), rcDice.left, rcDice.top);
+							bulletList[iDiceIndex]->Fire(rcTarget, ptSave);
 						}
-						bulletList[iIndex]->Fire(rcTarget);
 
+					}
+
+
+
+					// 발사 이동 
+					if (bulletList[iDiceIndex]->IsFire())
+					{
+						bulletList[iDiceIndex]->BulletMove(rcTarget);
+					}
+
+					if (bulletList[iDiceIndex]->IsCollision())
+					{
+						bulletList[iDiceIndex]->SetCollision(false);
+						iDiceIndex++;
+						if (iDiceIndex >= iLevel)
+						{
+							iDiceIndex = 0;
+						}
+						DiceFirePos(GetDiceLevel(), rcDice.left, rcDice.top);
+						bulletList[iDiceIndex]->Fire(rcTarget);
 					}
 				}
 			}
 
-
 		}
-#endif
-
-
+			
 	}
 
 
@@ -325,13 +311,14 @@ void Dice::Render(HDC hdc)
 
 	//  DrawBullet
 	{
-		for (int i = 0; i < MAXBULLET; i++)
-		{
-			if (bulletList[i]->IsFire())
-			{
-				bulletList[i]->Render(hdc);
-			}
-		}
+		RenderBullet(hdc);
+		//for (int i = 0; i < MAXBULLET; i++)
+		//{
+		//	if (bulletList[i]->IsFire())
+		//	{
+		//		bulletList[i]->Render(hdc);
+		//	}
+		//}
 	}
 
 
@@ -590,14 +577,14 @@ void Dice::LevelDiceRender(HDC hdc)
 	{
 	case 1:
 	{
-		DrawObject(hdc, levelPos.rcLevel1, 1, RGB(125, 125, 3), ELLIPSE);
+		DrawObject(hdc, levelPos.rcLevel1, 1,color, ELLIPSE);
 	}
 	break;
 	case 2:
 	{
 		for (int i = 0; i < 2; i++)
 		{
-			DrawObject(hdc, levelPos.rcLevel2[i], 1, RGB(125, 125, 3), ELLIPSE);
+			DrawObject(hdc, levelPos.rcLevel2[i], 1, color, ELLIPSE);
 		}
 	}
 	break;
@@ -605,7 +592,7 @@ void Dice::LevelDiceRender(HDC hdc)
 	{
 		for (int i = 0; i < 3; i++)
 		{
-			DrawObject(hdc, levelPos.rcLevel3[i], 1, RGB(125, 125, 3), ELLIPSE);
+			DrawObject(hdc, levelPos.rcLevel3[i], 1, color, ELLIPSE);
 		}
 	}
 	break;
@@ -613,7 +600,7 @@ void Dice::LevelDiceRender(HDC hdc)
 	{
 		for (int i = 0; i <4; i++)
 		{
-			DrawObject(hdc, levelPos.rcLevel4[i], 1, RGB(125, 125, 3), ELLIPSE);
+			DrawObject(hdc, levelPos.rcLevel4[i], 1, color, ELLIPSE);
 		}
 	}
 	break;
@@ -621,7 +608,7 @@ void Dice::LevelDiceRender(HDC hdc)
 	{
 		for (int i = 0; i < 5; i++)
 		{
-			DrawObject(hdc, levelPos.rcLevel5[i], 1, RGB(125, 125, 3), ELLIPSE);
+			DrawObject(hdc, levelPos.rcLevel5[i], 1, color, ELLIPSE);
 		}
 	}
 	break;
@@ -629,7 +616,7 @@ void Dice::LevelDiceRender(HDC hdc)
 	{
 		for (int i = 0; i < 6; i++)
 		{
-			DrawObject(hdc, levelPos.rcLevel6[i], 1, RGB(125, 125, 3), ELLIPSE);
+			DrawObject(hdc, levelPos.rcLevel6[i], 1, color, ELLIPSE);
 		}
 	}
 	break;
@@ -697,10 +684,12 @@ void Dice::DiceFirePos(int _level, int _x, int _y)
 	{
 	case 1:
 	{
+		ptSave.x = _x + iDiceWidth / 2;
+		ptSave.y = _y + iDiceHeight / 2;
+
 		if (!bulletList[0]->IsFire())
 		{
-			ptSave.x = _x + iDiceWidth / 2;
-			ptSave.y = _y + iDiceHeight / 2;
+			
 			bulletList[0]->SetPosition(ptSave);
 			bulletList[0]->SetStartPosition(ptSave);
 		}
@@ -718,12 +707,13 @@ void Dice::DiceFirePos(int _level, int _x, int _y)
 		{
 			if (!bulletList[i]->IsFire())
 			{
+
 				bulletList[i]->SetPosition(ptSave);
 				bulletList[i]->SetStartPosition(ptSave);
 
+				ptSave.x += (iDiceWidth / 3);
 
 			}
-			ptSave.x += (iDiceWidth / 3);
 
 		}
 	}
@@ -829,11 +819,11 @@ void Dice::DiceFirePos(int _level, int _x, int _y)
 
 					
 				}
-				levelPos.iCircleStartX += (iDiceWidth / 6 * 2);
+				ptSave.x += (iDiceWidth / 6 * 2);
 				iTemp++;
 			}
-			levelPos.iCircleStartX = _x + (iDiceWidth / 6 * 2);
-			levelPos.iCircleStartY += (iDiceHeight / 4);
+			ptSave.x = _x + (iDiceWidth / 6 * 2);
+			ptSave.y += (iDiceHeight / 4);
 		}
 	}
 	break;
@@ -845,5 +835,28 @@ void Dice::SetColor(eDiceColor _color)
 {
 	 diceType = _color; 
 	 _image->SetFrameX(diceType);
+}
+
+void Dice::ResetBullet()
+{
+	for (int i = 0; i < MAXBULLET; i++)
+	{
+		bulletList[i]->SetFire(false);
+	}
+}
+
+void Dice::RenderBullet(HDC hdc)
+{
+	for (int i = 0; i < MAXBULLET; i++)
+		{
+			if (bulletList[i]->IsFire())
+			{
+				bulletList[i]->Render(hdc);
+			}
+		}
+}
+
+void Dice::DiceAbility()
+{
 }
 

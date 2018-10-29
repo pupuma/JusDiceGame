@@ -3,13 +3,15 @@
 
 
 
-Bullet::Bullet()
+Bullet::Bullet(COLORREF _color)
 {
 	isLive = false;
 	isFire = false;
-	fSpeed = 10.0f;
+	fSpeed = 5.0f;
 	isCollision = false;
 	fSaveAngle = 0;
+	color = _color;
+	iDamage = 1;
 }
 
 
@@ -43,7 +45,7 @@ void Bullet::Update()
 
 void Bullet::Render(HDC hdc)
 {
-	DrawObject(hdc, rcBullet, 1, RGB(123, 123, 123), ELLIPSE);
+	DrawObject(hdc, rcBullet, 1, color, ELLIPSE);
 
 #if defined(_DEBUG_TEST)
 	DrawLine(hdc, ptSave, pt, 1, RGB(255, 0, 0));
@@ -91,15 +93,15 @@ void Bullet::BulletMove(RECT _rcTarget)
 	pt.x = iPosX;
 	pt.y = iPosY;
 
-	rcBullet = RectMakeCenter(iPosX, iPosY, iWidth, iHeight);
+	rcBullet = RectMakeCenter(pt.x, pt.y, iWidth, iHeight);
 }
 
 void Bullet::ResetPosition()
 {
 	rcBullet = RectMakeCenter(iStartPosX, iStartPosY, iWidth, iHeight);
-	iPosX = iStartPosX;
-	iPosY = iStartPosY;
-	isCollision = false;
+	//iPosX = iStartPosX;
+	//iPosY = iStartPosY;
+	//isCollision = false;
 }
 
 void Bullet::SetPosition(int _x, int _y)

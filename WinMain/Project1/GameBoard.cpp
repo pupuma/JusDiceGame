@@ -2,6 +2,7 @@
 
 #include "GameBoard.h"
 #include "Dice.h"
+#include "Bullet.h"
 
 
 GameBoard::GameBoard()
@@ -15,6 +16,8 @@ GameBoard::GameBoard()
 	iDiceWidth = 73;
 	iDiceHeight = 60;
 	iSelectNumber = -1;
+	index = -1;
+	iDestSelectNumber = -1;
 }
 
 
@@ -197,13 +200,7 @@ bool GameBoard::Init()
 	}
 
 	// EnemyLine °æ·Î
-	{
-		ptGameLine1 = { 59, 0 };
-		ptGameLine2 = { 59, 558 };
-		ptGameLine3 = { 540, 558 };
-		ptGameLine4 = { 540, 0 };
-
-	}
+	
 
 	// Save DIce Position 
 
@@ -271,6 +268,31 @@ void GameBoard::Update()
 			}
 		}
 
+		if (!diceList.empty())
+		{
+			if (KEYMANAGER->IsStayKeyDown(VK_LBUTTON))
+			{
+				for (it = diceList.begin(); it != diceList.end(); it++)
+				{
+					if (PtInRect(&(*it).second->GetRectDice(), _ptMouse) && (*it).second->IsClick() == false)
+					{
+						if (it->first != iSelectNumber)
+						{
+							iDestSelectNumber = it->first;
+							//(*it).second->SetDicePosition(_ptMouse);
+							//diceList[iIndex]->SetDicePosition(_ptMouse);
+							break;
+						}
+					}
+					else
+					{
+						iDestSelectNumber = -1;
+
+					}
+				}
+			}
+		}
+
 	}
 
 	{
@@ -286,13 +308,31 @@ void GameBoard::Update()
 						{
 							(*it).second->SetClick(false);
 							//dice[iIndex]->SetDicePosition(_);
+							iDestSelectNumber = -1;
 						}
 						else
 						{
+
 							(*it).second->SetClick(false);
 							(*it).second->SetDicePosition(_ptSave);
+							if ((*it).second->GetDiceLevel() < 6)
+							{
+								if (iDestSelectNumber != -1 && iSelectNumber != -1)
+								{
+									if (GAMESYS->CompareDice(diceList, iSelectNumber, iDestSelectNumber))
+									{
+										diceList = GAMESYS->ConvergeDice(diceList, iSelectNumber, iDestSelectNumber, (*it).second->GetDiceLevel());
+									}
+									iDestSelectNumber = -1;
+
+								}
+							}
+							
+					
 						}
 						iSelectNumber = -1;
+						iDestSelectNumber = -1;
+
 						break;
 					}
 				}
@@ -300,6 +340,7 @@ void GameBoard::Update()
 			}
 		}
 	}
+
 
 
 	{
@@ -312,6 +353,12 @@ void GameBoard::Update()
 		}
 		
 	}
+
+	{
+		GAMESYS->SetDiceList(diceList);
+
+	}
+	
 	//{
 	//	GetCursorPos(&_ptMouse);
 	//	ScreenToClient(_hWnd, &_ptMouse);
@@ -406,14 +453,9 @@ void GameBoard::Render(HDC hdc)
 	//RECT GameBoadDraw
 	{
 		//DrawObject(hdc, rcGameBoard, 1, RGB(124, 123, 133), RECTANGLE);
+		TIMEMANAGER->Render(hdc);
 	}
-	// Draw Game Line 
-	{
-		DrawLine(hdc, ptGameLine1, ptGameLine2, 2, RGB(0, 0, 0));
-		DrawLine(hdc, ptGameLine2, ptGameLine3, 2, RGB(0, 0, 0));
-		DrawLine(hdc, ptGameLine3, ptGameLine4, 2, RGB(0, 0, 0));
-
-	}
+	
 
 	{
 
@@ -431,10 +473,10 @@ void GameBoard::Render(HDC hdc)
 			for (it = diceList.begin(); it != diceList.end(); it++)
 			{
 				(*it).second->Render(hdc);
-				
-				int index = it->first;
-				_stprintf(str, TEXT("Test : %5d"), index);
-				TextOut(hdc, 10, 0, str, _tcslen(str));
+				index = it->first;
+
+				//_stprintf(str, TEXT("Test : %5d"), index);
+				//TextOut(hdc, 10, 0, str, _tcslen(str));
 			}
 
 			// Select
@@ -442,6 +484,7 @@ void GameBoard::Render(HDC hdc)
 			{
 				if (it->first == iSelectNumber)
 				{
+
 					(*it).second->Render(hdc);
 					break;
 				}
@@ -452,7 +495,32 @@ void GameBoard::Render(HDC hdc)
 
 		
 	}
-	
+
+	{
+		if (!diceList.empty())
+		{
+			for (it = diceList.begin(); it != diceList.end(); it++)
+			{
+				(*it).second->RenderBullet(hdc);
+			}
+		}
+	}
+#if defined(_DEBUG_TEST)
+	{
+
+		_stprintf(str, TEXT("Add : %5d"), index);
+		TextOut(hdc, 10, 0, str, _tcslen(str));
+
+		TCHAR str2[256];
+		_stprintf(str2, TEXT("dest : %5d"), iDestSelectNumber);
+		TextOut(hdc, 10, 10, str2, _tcslen(str2));
+
+		TCHAR str3[256];
+		_stprintf(str3, TEXT("Select : %5d"), iSelectNumber);
+		TextOut(hdc, 10, 20, str3, _tcslen(str3));
+
+	}
+#endif
 	{
 		//for (int i = 0; i < GAMEBOARDSIZE; i++)
 		//{

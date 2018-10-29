@@ -23,6 +23,12 @@ private:
 	std::list<Enemy*>::iterator it;
 	eGameType _type;
 private:
+	POINT ptGameLine1;
+	POINT ptGameLine2;
+	POINT ptGameLine3;
+	POINT ptGameLine4;
+
+private:
 	Image* backGroundImg;
 	RECT testRect;
 	RECT testRect2;
@@ -43,6 +49,4 @@ public:
 	void Release();
 	void Update();
 	void Render(HDC hdc);
-public:
-	void ChangeType();
 };

@@ -11,7 +11,7 @@
 
 
 class Dice;
-
+class Bullet;
 
 
 class GameBoard
@@ -19,14 +19,17 @@ class GameBoard
 private:
 	std::list<std::pair<int, Dice*>> diceList;
 	std::list<std::pair<int, Dice*>>::iterator it;
+	
 	//std::list<std::pair<int, Dice*>>::iterator it_Select;
 	int iSelectNumber;
+	int iDestSelectNumber;
 
 	TCHAR str[256];
 
 private:
 	RECT rcTest[GAMEBOARDSIZE];
-
+	int index;
+	
 	
 	RECT rcCircle1;
 	RECT rcCircle2[2];
@@ -38,11 +41,7 @@ private:
 	// vector?
 	std::vector<RECT> vCircleList;
 	//std::vector<Dice*> diceList;
-private:
-	POINT ptGameLine1;
-	POINT ptGameLine2;
-	POINT ptGameLine3;
-	POINT ptGameLine4;
+
 private:
 	int iDiceStartX;
 	int iDiceStartY;
