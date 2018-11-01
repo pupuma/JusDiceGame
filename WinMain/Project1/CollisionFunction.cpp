@@ -34,7 +34,7 @@ bool CollisionCircleAndPoint(const float r, const float x, const float y, float 
 }
 
 
-bool CollisionCircleAndRect(const float r, const float x, const float y, const RECT & r1)
+bool CollisionCircleAndRect(const float r, const float x, const float y, RECT & r1)
 {
 	if (r1.left <= x && r1.right >= x &&
 		r1.top <= y && r1.bottom >= y)

@@ -32,7 +32,7 @@ private:
 
 	bool isCollision;
 private:
-	float fSpeed;
+	int fSpeed;
 	int iDamage;
 private:
 	RECT rcBullet;
@@ -42,13 +42,23 @@ public:
 	~Bullet();
 public:
 	bool Init(int _x, int _y);
+	bool Init(int _x, int _y, float _speedUp);
+
 	void Update();
 	void Render(HDC hdc);
 public:
+	void Fire();
+
 	void Fire(RECT _rcTarget);
+
 	void Fire(RECT _rcTarget, POINT _pt);
+	void Fire(POINT _pt);
+
 
 	void BulletMove(RECT _rcTarget);
+	void BulletMove(POINT _ptTarget);
+
+
 	void ResetPosition();
 	void SetPosition(int _x ,int _y);
 	void SetPosition(POINT _pt);

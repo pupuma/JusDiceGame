@@ -29,25 +29,10 @@ bool MainGame::Init()
 	IMAGEMANAGER->AddFrameImage(TEXT("GameDiceInitButton"), TEXT("../../Resource/BMP/GameDiceInitButton.bmp"), 220, 91, 2, 1, true, COLOR_M);
 
 	{
-		IMAGEMANAGER->AddImage(TEXT("RedDiceOff"), TEXT("../../Resource/BMP/RedDiceOff.bmp"),73,62,true,COLOR_M);
-		IMAGEMANAGER->AddImage(TEXT("RedDiceOn"), TEXT("../../Resource/BMP/RedDiceOn.bmp"), 73, 62, true, COLOR_M);
-
-		IMAGEMANAGER->AddImage(TEXT("YellowDiceOff"), TEXT("../../Resource/BMP/YellowDiceOff.bmp"), 73, 62, true, COLOR_M);
-		IMAGEMANAGER->AddImage(TEXT("YellowDiceOn"), TEXT("../../Resource/BMP/YellowDiceOn.bmp"), 73, 62, true, COLOR_M);
-
-		IMAGEMANAGER->AddImage(TEXT("BlueDiceOff"), TEXT("../../Resource/BMP/BlueDiceOff.bmp"), 73, 62, true, COLOR_M);
-		IMAGEMANAGER->AddImage(TEXT("BlueDiceOn"), TEXT("../../Resource/BMP/BlueDiceOn.bmp"), 73, 62, true, COLOR_M);
-
-		IMAGEMANAGER->AddImage(TEXT("GreenDiceOff"), TEXT("../../Resource/BMP/GreenDiceOff.bmp"), 73, 62, true, COLOR_M);
-		IMAGEMANAGER->AddImage(TEXT("GreenDiceOn"), TEXT("../../Resource/BMP/GreenDiceOn.bmp"), 73, 62, true, COLOR_M);
-
-		IMAGEMANAGER->AddImage(TEXT("GrayDiceOff"), TEXT("../../Resource/BMP/GrayDiceOff.bmp"), 73, 62, true, COLOR_M);
-		IMAGEMANAGER->AddImage(TEXT("GrayDiceOn"), TEXT("../../Resource/BMP/GrayDiceOn.bmp"), 73, 62, true, COLOR_M);
-
-		IMAGEMANAGER->AddImage(TEXT("BlackDiceOff"), TEXT("../../Resource/BMP/BlackDiceOff.bmp"), 73, 62, true, COLOR_M);
-		IMAGEMANAGER->AddImage(TEXT("BlackDiceOn"), TEXT("../../Resource/BMP/BlackDiceOn.bmp"), 73, 62, true, COLOR_M);
+		IMAGEMANAGER->AddFrameImage(TEXT("StartButton"), TEXT("../../Resource/BMP/StartButton.bmp"), 226, 108, 2, 1, true, COLOR_M);
 
 	}
+
 
 	//
 	STATEMANAGER->StateInit();

@@ -7,7 +7,8 @@ BlueDice::BlueDice()
 {
 	diceType = eDiceColor::DICE_BLUE;
 	color = RGB(43, 147, 217);
-
+	sa = eStateAbnormal::SA_SlOW;
+	fSlow = 1.f;
 }
 
 
@@ -23,6 +24,10 @@ bool BlueDice::Init(int _x, int _y, RECT _rcGameBoard)
 
 		//_image = IMAGEMANAGER->FindImage(TEXT("TestDice"));
 		_image->Init(TEXT("../../Resource/BMP/DiceOff.bmp"), 438, 62, 6, 1, true, COLOR_M);
+
+
+		_imageOn = new Image();
+		_imageOn->Init(TEXT("../../Resource/BMP/DiceOn.bmp"), 438, 62, 6, 1, true, COLOR_M);
 	}
 
 	//Bullet Create
@@ -76,4 +81,5 @@ bool BlueDice::Init(int _x, int _y, RECT _rcGameBoard)
 
 void BlueDice::DiceAbility()
 {
+	GAMESYS->SetSlowPoint(fSlow);
 }

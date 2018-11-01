@@ -5,9 +5,9 @@
 
 Enemy::Enemy()
 {
-	
+	test = new TimeCheck(TEXT("Enemy"));
 	// hp
-	iHp = 30;
+	iHp = 100;
 
 	// position 
 	iStartX = 59;
@@ -23,13 +23,27 @@ Enemy::Enemy()
 	iColorG = 23;
 	iColorB = 5;
 
-	iMoveSpeed = 2;
-	
+	fMoveSpeed = 2.f;
+	fMaxMoveSpeed = 2.f;
+	fAngle = PI;
+	sa = SA_NONE;
+
+	fFreezTime = 3.0f;
+	fPoisonTime = 3.0f;
+
+	fFreezDeltaTime = 1.0f;
+	fPoisonDeltaTime = 0.5f;
+	isPoison = false;
+	isSlow = false;
+	isLive = true;
+	isDieState = false;
+	activate = false;
 }
 
 
 Enemy::~Enemy()
 {
+	delete test;
 }
 
 bool Enemy::Init()
@@ -63,6 +77,7 @@ bool Enemy::Init(int _y)
 		ptDestPos3 = GAMESYS->GetGameLine()[3];
 
 		ptCurrentPos = ptDestPos1;
+		isLive = true;
 	}
 	return true;
 }
@@ -103,13 +118,21 @@ void Enemy::EnemyAI()
 		float fPosX = static_cast<float>(iStartX);
 		float fPosY = static_cast<float>(iStartY);
 
-		float fAngle = UTIL::GetAngle(fPosX, fPosY, ptCurrentPos.x, ptCurrentPos.y);
+		fAngle = UTIL::GetAngle(fPosX, fPosY, ptCurrentPos.x, ptCurrentPos.y);
 
-		iStartX += cosf(fAngle) * iMoveSpeed;
-		iStartY += -sinf(fAngle) * iMoveSpeed;
+		// State Abnormal Effect 
+		StateAbnormalEffect(iStartX, iStartY);
+		
+		//iStartX += cosf(fAngle) * iMoveSpeed;
+		//iStartY += -sinf(fAngle) * iMoveSpeed;
+
+		iStartX += cosf(fAngle) * fMoveSpeed;
+		iStartY += -sinf(fAngle) * fMoveSpeed;
 
 		if ((iStartY + iNomalHeight /2  >= 0))
 		{
+			//
+			SetActivate(true);
 			GAMESYS->SetEnemyActivate(true);
 		}
 
@@ -142,6 +165,99 @@ void Enemy::DreaseHp(int _attackPoint)
 	if (iHp <= 0)
 	{
 		iHp = 0;
+		isLive = false;
 	}
+}
+
+void Enemy::StateAbnormalEffect(int _posX, int _posY)
+{
+	if (sa == eStateAbnormal::SA_NONE)
+	{
+
+	}
+
+	if (sa == eStateAbnormal::SA_DIE)
+	{
+		isDieState = true;
+	}
+
+	if (sa == eStateAbnormal::SA_POISON)
+	{
+		isPoison = true;
+
+	}
+
+	if (sa == eStateAbnormal::SA_SlOW)
+	{
+		isSlow = true;
+		q_stateAb.push(sa);
+
+	}
+
+
+	//
+
+
+	//
+	if (isDieState)
+	{
+		isLive = GAMESYS->RandomDie();
+		isDieState = false;
+		sa = eStateAbnormal::SA_NONE;
+	}
+
+
+	if (isPoison)
+	{
+		fPoisonTime -= TIMEMANAGER->GetElapsedTime();
+		if (fPoisonTime >= 0.0f)
+		{
+			fPoisonDeltaTime -= TIMEMANAGER->GetElapsedTime();
+			if (fPoisonDeltaTime <= 0.0f)
+			{
+				Poison(_posX, _posY);
+				fPoisonDeltaTime = 0.5f;
+			}
+		}
+		else
+		{
+			isPoison = false;
+			fPoisonTime = 3.0f;
+		}
+	}
+
+	if (isSlow)
+	{
+		fFreezTime -= TIMEMANAGER->GetElapsedTime();
+		if (fFreezTime >= 0.0f)
+		{
+			Slow(_posX, _posY);
+		}
+		else
+		{
+			isSlow = false;
+			fMoveSpeed = fMaxMoveSpeed;
+			fFreezTime = 3.0f;
+		}
+
+	}
+}
+
+void Enemy::Poison(int _posX, int _posY)
+{
+	iHp -= GAMESYS->GetPoisonPoint();
+}
+
+void Enemy::Slow(int _posX, int _posY)
+{
+	float iSlow = GAMESYS->GetSlowPoint();
+
+	fMoveSpeed -= iSlow;
+
+	if (fMoveSpeed <= 1.f)
+	{
+		fMoveSpeed = 1.f;
+	}
+	
 }
 

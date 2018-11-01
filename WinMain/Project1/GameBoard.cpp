@@ -18,6 +18,7 @@ GameBoard::GameBoard()
 	iSelectNumber = -1;
 	index = -1;
 	iDestSelectNumber = -1;
+	fClickedTime = 1.0f;
 }
 
 
@@ -230,18 +231,25 @@ void GameBoard::Update()
 		{
 			if (KEYMANAGER->IsOnceKeyDown(VK_LBUTTON))
 			{
+				fClickedTime = 1.0f;
+
 				for (it = diceList.begin(); it != diceList.end(); it++)
 				{
 					if (PtInRect(&(*it).second->GetRectDice(), _ptMouse) && (*it).second->IsClick() == false)
 					{
 						iSelectNumber = it->first;
+
 						_ptSave = (*it).second->GetDiceCenterPosition();
 						(*it).second->SetClick(true);
 						isClicked = true;
 
+						
+
+
 						break;
 					}
 				}
+				
 			}
 
 		}	
@@ -257,11 +265,20 @@ void GameBoard::Update()
 		{
 			if (KEYMANAGER->IsStayKeyDown(VK_LBUTTON))
 			{
+				fClickedTime -= TIMEMANAGER->GetElapsedTime();
+
+				
+
 				for (it = diceList.begin(); it != diceList.end(); it++)
 				{
 					if (iSelectNumber == it->first)
 					{
 						(*it).second->SetDicePosition(_ptMouse);
+
+						if (fClickedTime <= 0.0f)
+						{
+							GAMESYS->SetDiceListOn(diceList, iSelectNumber);
+						}
 						break;
 					}
 				}
@@ -272,6 +289,8 @@ void GameBoard::Update()
 		{
 			if (KEYMANAGER->IsStayKeyDown(VK_LBUTTON))
 			{
+				//fClickedTime = 1.0f;
+
 				for (it = diceList.begin(); it != diceList.end(); it++)
 				{
 					if (PtInRect(&(*it).second->GetRectDice(), _ptMouse) && (*it).second->IsClick() == false)
@@ -279,6 +298,11 @@ void GameBoard::Update()
 						if (it->first != iSelectNumber)
 						{
 							iDestSelectNumber = it->first;
+							if (-1 != iSelectNumber)
+							{
+								GAMESYS->SetDiceListOn(diceList, iSelectNumber);
+							}
+
 							//(*it).second->SetDicePosition(_ptMouse);
 							//diceList[iIndex]->SetDicePosition(_ptMouse);
 							break;
@@ -300,6 +324,8 @@ void GameBoard::Update()
 		{
 			if (KEYMANAGER->IsOnceKeyUp(VK_LBUTTON))
 			{
+				GAMESYS->SetDiceListOff();
+
 				for (it = diceList.begin(); it != diceList.end(); it++)
 				{
 					if (it->first == iSelectNumber)
@@ -593,4 +619,15 @@ void GameBoard::Render(HDC hdc)
 
 	}
 
+}
+
+void GameBoard::RedRender(HDC hdc)
+{
+	if (!diceList.empty())
+	{
+		for (it = diceList.begin(); it != diceList.end(); it++)
+		{
+			(*it).second->CircleRender(hdc);
+		}
+	}
 }

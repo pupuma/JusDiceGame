@@ -10,3 +10,12 @@ enum eStateType
 	STATE_SUFFER,
 	STATE_DIE,
 };
+
+
+enum eStateAbnormal
+{
+	SA_SlOW,
+	SA_POISON,
+	SA_DIE,
+	SA_NONE,
+};

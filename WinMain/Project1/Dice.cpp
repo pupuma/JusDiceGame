@@ -7,12 +7,14 @@
 
 Dice::Dice()
 {
+	isChain = false;
+
 	diceType = eDiceColor::DICE_NONE;
 	//_image = IMAGEMANAGER->FindImage(TEXT("TestDice"));
-
+	sa = eStateAbnormal::SA_NONE;
 	iLevel =1; 
 	isClick = false;
-	iAttackPoint = 5;
+	iAttackPoint =1;
 	// Test
 	//targetRect = RectMakeCenter(59, 60, 54, 44);
 
@@ -21,7 +23,9 @@ Dice::Dice()
 	stateType = eStateType::STATE_NONE;
 	iDiceIndex = 0;
 	color = RGB(0, 0, 0);
-
+	radius = 7;
+	isDiceOn = false;
+	isTarget = false;
 }
 
 
@@ -235,76 +239,196 @@ void Dice::Update()
 
 		}
 
+		//====================================================================================================
 		{
-			if (GAMESYS->IsEnemyActivate())
+			{
+				// 적 검사 
+				if (GAMESYS->IsEnemyActivate())
+				{
+					if (!GAMESYS->IsEnemyEmpty())
+					{
+						if (!isTarget)
+						{
+							_target = GAMESYS->GetPosEnemy(this);
+
+							isTarget = true;
+						}
+						else
+						{
+							_target = GAMESYS->TargetUpdate(_target);
+						}
+					}
+
+				}
+
+			
+
+			}
+
+			{
+				if (_target.first == -1 || _target.second.x == 0 || _target.second.y == 0)
+				{
+					bulletList[iDiceIndex]->SetFire(false);
+					bulletList[iDiceIndex]->SetCollision(false);
+					bulletList[iDiceIndex]->SetFire(false);
+
+					bulletList[iDiceIndex]->ResetPosition();
+					isTarget = false;
+					return;
+				}
+			}
+
+			{
+				// 총알 발사 
+				if (!GAMESYS->IsEnemyEmpty())
+				{
+					if (GAMESYS->IsEnemyActivate())
+					{
+
+						if (!bulletList[0]->IsFire() &&
+							!bulletList[1]->IsFire() &&
+							!bulletList[2]->IsFire() &&
+							!bulletList[3]->IsFire() &&
+							!bulletList[4]->IsFire() &&
+							!bulletList[5]->IsFire())
+						{
+							if (!bulletList[0]->IsCollision() &&
+								!bulletList[1]->IsCollision() &&
+								!bulletList[2]->IsCollision() &&
+								!bulletList[3]->IsCollision() &&
+								!bulletList[4]->IsCollision() &&
+								!bulletList[5]->IsCollision())
+							{
+								iDiceIndex = 0;
+								ptSave = DiceStartFirePos(GetDiceLevel(), rcDice.left, rcDice.top);
+								bulletList[iDiceIndex]->Fire(rcTarget, ptSave);
+							}
+						}
+					}
+				}
+			}
+
+
+			
+			// Bullet Move
 			{
 				if (!GAMESYS->IsEnemyEmpty())
 				{
-					rcTarget = GAMESYS->GetRectEnemy();
-				}
-
-			}
-		}
-
-		{
-			if (!GAMESYS->IsEnemyEmpty())
-			{
-				if (GAMESYS->IsEnemyActivate())
-				{
-
-					if (!bulletList[0]->IsFire() &&
-						!bulletList[1]->IsFire() &&
-						!bulletList[2]->IsFire() &&
-						!bulletList[3]->IsFire() &&
-						!bulletList[4]->IsFire() &&
-						!bulletList[5]->IsFire())
-					{
-						if (!bulletList[0]->IsCollision() &&
-							!bulletList[1]->IsCollision() &&
-							!bulletList[2]->IsCollision() &&
-							!bulletList[3]->IsCollision() &&
-							!bulletList[4]->IsCollision() &&
-							!bulletList[5]->IsCollision())
-						{
-							iDiceIndex = 0;
-							ptSave = DiceStartFirePos(GetDiceLevel(), rcDice.left, rcDice.top);
-							bulletList[iDiceIndex]->Fire(rcTarget, ptSave);
-						}
-
-					}
-
-
-
-					// 발사 이동 
 					if (bulletList[iDiceIndex]->IsFire())
 					{
-						bulletList[iDiceIndex]->BulletMove(rcTarget);
-					}
-
-					if (bulletList[iDiceIndex]->IsCollision())
-					{
-						bulletList[iDiceIndex]->SetCollision(false);
-						iDiceIndex++;
-						if (iDiceIndex >= iLevel)
-						{
-							iDiceIndex = 0;
-						}
-						DiceFirePos(GetDiceLevel(), rcDice.left, rcDice.top);
-						bulletList[iDiceIndex]->Fire(rcTarget);
+						bulletList[iDiceIndex]->BulletMove(_target.second);
 					}
 				}
 			}
 
+			{
+				GAMESYS->CollisionBullet(this, iDiceIndex, _target);
+			}
+
+		
+			// Collision 
+			{
+				if (bulletList[iDiceIndex]->IsCollision())
+				{
+					bulletList[iDiceIndex]->SetCollision(false);
+					iDiceIndex++;
+					if (iDiceIndex >= iLevel)
+					{
+						iDiceIndex = 0;
+					}
+					DiceFirePos(GetDiceLevel(), rcDice.left, rcDice.top);
+
+					
+
+					bulletList[iDiceIndex]->Fire(_target.second);
+				}
+			}
+
+			
 		}
+
+
+		//====================================================================================================
+
+		//{
+		//	if (GAMESYS->IsEnemyActivate())
+		//	{
+		//		if (!GAMESYS->IsEnemyEmpty())
+		//		{
+		//			rcTarget = GAMESYS->GetRectEnemy();
+		//		}
+
+		//	}
+		//}
+
+		//{
+		//	if (!GAMESYS->IsEnemyEmpty())
+		//	{
+		//		if (GAMESYS->IsEnemyActivate())
+		//		{
+
+		//			if (!bulletList[0]->IsFire() &&
+		//				!bulletList[1]->IsFire() &&
+		//				!bulletList[2]->IsFire() &&
+		//				!bulletList[3]->IsFire() &&
+		//				!bulletList[4]->IsFire() &&
+		//				!bulletList[5]->IsFire())
+		//			{
+		//				if (!bulletList[0]->IsCollision() &&
+		//					!bulletList[1]->IsCollision() &&
+		//					!bulletList[2]->IsCollision() &&
+		//					!bulletList[3]->IsCollision() &&
+		//					!bulletList[4]->IsCollision() &&
+		//					!bulletList[5]->IsCollision())
+		//				{
+		//					iDiceIndex = 0;
+		//					ptSave = DiceStartFirePos(GetDiceLevel(), rcDice.left, rcDice.top);
+		//					bulletList[iDiceIndex]->Fire(rcTarget, ptSave);
+		//				}
+
+		//			}
+
+
+
+		//			// 발사 이동 
+		//			if (bulletList[iDiceIndex]->IsFire())
+		//			{
+		//				bulletList[iDiceIndex]->BulletMove(rcTarget);
+		//			}
+
+		//			if (bulletList[iDiceIndex]->IsCollision())
+		//			{
+		//				bulletList[iDiceIndex]->SetCollision(false);
+		//				iDiceIndex++;
+		//				if (iDiceIndex >= iLevel)
+		//				{
+		//					iDiceIndex = 0;
+		//				}
+		//				DiceFirePos(GetDiceLevel(), rcDice.left, rcDice.top);
+		//				bulletList[iDiceIndex]->Fire(rcTarget);
+		//			}
+				//}
+		//	}
+		//
+		//}
 			
 	}
 
+	
 
 }
 
 void Dice::Render(HDC hdc)
 {
-	_image->FrameRender(hdc, rcDice.left, rcDice.top);
+	//
+	if (!isDiceOn)
+	{
+		_image->FrameRender(hdc, rcDice.left, rcDice.top);
+	}
+	else
+	{
+		_imageOn->FrameRender(hdc, rcDice.left, rcDice.top);
+	}
 	//DrawObject(hdc, rcDice, 1, RGB(125, 125, 3), RECTANGLE);
 	LevelDiceRender(hdc);
 
@@ -324,6 +448,10 @@ void Dice::Render(HDC hdc)
 
 	
 	
+}
+
+void Dice::CircleRender(HDC hdc)
+{
 }
 
 void Dice::DiceLevelBullet(int _level, int _x ,int _y)
@@ -453,6 +581,8 @@ void Dice::DiceLevelBullet(int _level, int _x ,int _y)
 		break;
 	}
 }
+
+
 
 void Dice::DiceLevelBulletUpdate(int _level, int _x, int _y)
 {

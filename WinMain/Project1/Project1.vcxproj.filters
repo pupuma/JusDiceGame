@@ -204,6 +204,18 @@
     <ClCompile Include="YellowDice.cpp">
       <Filter>MainGame\02.Object\Character\Dice\DiceType</Filter>
     </ClCompile>
+    <ClCompile Include="GameButton.cpp">
+      <Filter>MainGame\02.Object\GameButton</Filter>
+    </ClCompile>
+    <ClCompile Include="GameSpeedButton.cpp">
+      <Filter>MainGame\02.Object\GameButton</Filter>
+    </ClCompile>
+    <ClCompile Include="GameStateButton.cpp">
+      <Filter>MainGame\02.Object\GameButton</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeCheck.cpp">
+      <Filter>2DFrameWork\Utill</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameNode.h">
@@ -337,6 +349,18 @@
     </ClInclude>
     <ClInclude Include="GreenDice.h">
       <Filter>MainGame\02.Object\Character\Dice\DiceType</Filter>
+    </ClInclude>
+    <ClInclude Include="GameButton.h">
+      <Filter>MainGame\02.Object\GameButton</Filter>
+    </ClInclude>
+    <ClInclude Include="GameSpeedButton.h">
+      <Filter>MainGame\02.Object\GameButton</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStateButton.h">
+      <Filter>MainGame\02.Object\GameButton</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeCheck.h">
+      <Filter>2DFrameWork\Utill</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

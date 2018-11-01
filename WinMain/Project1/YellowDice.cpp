@@ -9,6 +9,8 @@ YellowDice::YellowDice()
 	diceType = eDiceColor::DICE_YELLOW;
 	color = RGB(249,200,0);
 
+	isChain = false;
+	chainCount = 1;
 }
 
 
@@ -24,6 +26,9 @@ bool YellowDice::Init(int _x, int _y, RECT _rcGameBoard)
 
 		//_image = IMAGEMANAGER->FindImage(TEXT("TestDice"));
 		_image->Init(TEXT("../../Resource/BMP/DiceOff.bmp"), 438, 62, 6, 1, true, COLOR_M);
+
+		_imageOn = new Image();
+		_imageOn->Init(TEXT("../../Resource/BMP/DiceOn.bmp"), 438, 62, 6, 1, true, COLOR_M);
 	}
 
 	//Bullet Create
@@ -77,5 +82,8 @@ bool YellowDice::Init(int _x, int _y, RECT _rcGameBoard)
 
 void YellowDice::DiceAbility()
 {
+	isChain = true;
+
+	// 리스트 정보 -> 넘김 채인 수 -> 거기에 맞는 체인에 데미지 
 
 }

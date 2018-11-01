@@ -153,6 +153,19 @@ public:
 		if (frameY > _imageInfo->maxFrameY) _imageInfo->currentFrameY = _imageInfo->maxFrameY;
 	}
 
+	inline void SetWidth(int _width)
+	{
+		_imageInfo->width = _width;
+	}
+
+	inline void SetHeight(int _height)
+	{
+		_imageInfo->height = _height;
+	}
+
+
+
+
 	inline int GetMaxFrameX() { return _imageInfo->maxFrameX; }
 	inline int GetMaxFrameY() { return _imageInfo->maxFrameY; }
 

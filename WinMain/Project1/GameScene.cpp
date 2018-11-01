@@ -10,7 +10,11 @@ GameScene::GameScene()
 	iEnemyStartX = 0;
 	iEnemyStartY = 0;
 
-	_type = eGameType::GMAE_PLAY;
+	_type = eGameType::GMAE_IDLE;
+	fDeltaTime = 1.5f;
+	iCount = 0;
+	iRound = 1;
+	
 }
 
 
@@ -47,7 +51,6 @@ bool GameScene::Init()
 
 		GAMESYS->SetGameLine(gameLineList);
 
-
 	}	
 
 	// GameBoard 
@@ -61,15 +64,15 @@ bool GameScene::Init()
 	}
 	// Game Enemy
 	{
-		int currentY = -300;
-		int iEnemyCount = GAMESYS->GetRound();
-		for (int i = 0; i < 6; i++)
-		{
-			Enemy* enemy = new Enemy();
-			enemy->Init(currentY);
-			currentY -= (10 + enemy->GetHeight());
-			enemyList.push_back(enemy);
-		}
+		//int currentY = -300;
+		//int iEnemyCount = GAMESYS->GetRound();
+		//for (int i = 0; i <25; i++)
+		//{
+		//	Enemy* enemy = new Enemy();
+		//	enemy->Init(currentY);
+		//	currentY -= (10 + enemy->GetHeight());
+		//	enemyList.push_back(enemy);
+		//}
 
 	}
 	
@@ -77,7 +80,7 @@ bool GameScene::Init()
 	{
 		//GAMESYS->SetRound(3);
 
-		GAMESYS->SetEnemyList(enemyList);
+		//GAMESYS->SetEnemyList(enemyList);
 	}
 
 	// Dice Create Button
@@ -85,6 +88,7 @@ bool GameScene::Init()
 		dcButtom = new DiceCreateButton();
 		dcButtom->Init();
 	}
+
 	return true;
 }
 
@@ -94,38 +98,71 @@ void GameScene::Release()
 
 void GameScene::Update()
 {
-
-
 	{
 		dcButtom->Update();
 	}
 
+	if (KEYMANAGER->IsOnceKeyDown(VK_F1))
+	{
+		_type = eGameType::GMAE_PLAY;
+		CreateThread(
+			NULL,
+			0,
+			ThreadFunction,
+			this, NULL,
+			0
+		);
+
+	}
 
 	if (_type == eGameType::GMAE_IDLE)
 	{
-		GAMESYS->SetEnemyList(enemyList);
-		//GAMESYS->CollisionEnemy(enemyList);
-		for (it = enemyList.begin(); it != enemyList.end(); it++)
-		{
-			//(*it)->Update();
-		}
+		//_type = eGameType::GMAE_PLAY;
+
+		//GAMESYS->SetEnemyList(enemyList);
+		iRound = GAMESYS->GetRound();
+
+
+
 		gameBoard->Update();
-
-
 	}
 	else if (_type == eGameType::GMAE_PLAY)
 	{
-		enemyList = GAMESYS->GetEnemyList();
+
 		gameBoard->Update();
-		//GAMESYS->CollisionEnemy(enemyList);
 
-		for (it = enemyList.begin(); it != enemyList.end(); it++)
 		{
-			(*it)->Update();
+			GAMESYS->EnemyProDuce();
+			GAMESYS->EnemyUpdate();
+
+			//===================================
+
+			//TimeCheck* test = new TimeCheck(TEXT("GameBoard"));
+
+			//SAFE_DELETE(test);
+
+			//GAMESYS->CollisionEnemy(enemyList);
+
+			{
+				//TimeCheck test(TEXT("EnemyList"));
+
+				//for (it = enemyList.begin(); it != enemyList.end(); it++)
+				//{
+				//	(*it)->Update();
+
+				//}
+			}
+
+
+			//GAMESYS->CollisionObject(GAMESYS->GetEnemyList());
+
+			//{
+			//	TimeCheck test(TEXT("Collisoin"));
+
+			//	GAMESYS->CollisionObject(enemyList);
+			//}
+
 		}
-
-		GAMESYS->CollisionObject(enemyList);
-
 	}
 	else
 	{
@@ -133,10 +170,6 @@ void GameScene::Update()
 		//gameBoard->Update();
 
 	}
-
-
-
-
 }
 
 void GameScene::Render(HDC hdc)
@@ -160,10 +193,27 @@ void GameScene::Render(HDC hdc)
 	
 	// Enemy
 	{
-		for (it = enemyList.begin(); it != enemyList.end(); it++)
+
 		{
-			(*it)->Render(hdc);
+			gameBoard->RedRender(hdc);
 		}
+
+		{
+			GAMESYS->EnemyListRender(hdc);
+		}
+
+
+
+		//{
+		//	for (it = enemyList.begin(); it != enemyList.end(); it++)
+		//	{
+		//		if ((*it)->GetActivate())
+		//		{
+		//			(*it)->Render(hdc);
+		//		}
+		//	}
+		//}
+		
 		//DrawObject(hdc, testRect, 1, RGB(234, 57, 67), ROUNDRECT, 20, 20);
 
 	}
@@ -180,3 +230,26 @@ void GameScene::Render(HDC hdc)
 	// 도형 그리기 
 	//RoundRect(hdc, testRect.left, testRect.top, testRect.right, testRect.bottom, 30, 30);
 }
+
+
+
+DWORD CALLBACK ThreadFunction(LPVOID lpParam)
+{
+	int currentY = -50;
+	int iEnemyCount = GAMESYS->GetRound();
+	{
+		TimeCheck test(TEXT("GameSystem"));
+
+		for (int i = 0; i < 5000; i++)
+		{
+			Enemy* enemy = new Enemy();
+			enemy->Init(currentY);
+			currentY -= (10 + enemy->GetHeight());
+			//enemyList.push_back(enemy);
+			GAMESYS->AddEnemy(enemy,i);
+		}
+	}
+
+	return 0;
+}
+

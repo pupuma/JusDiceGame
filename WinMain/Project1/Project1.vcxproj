@@ -161,8 +161,11 @@
     <ClCompile Include="EffectManager.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="GameBoard.cpp" />
+    <ClCompile Include="GameButton.cpp" />
     <ClCompile Include="GameNode.cpp" />
     <ClCompile Include="GameScene.cpp" />
+    <ClCompile Include="GameSpeedButton.cpp" />
+    <ClCompile Include="GameStateButton.cpp" />
     <ClCompile Include="GameSystem.cpp" />
     <ClCompile Include="GrayDice.cpp" />
     <ClCompile Include="GreenDice.cpp" />
@@ -179,6 +182,7 @@
     <ClCompile Include="StartScene.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="StateManager.cpp" />
+    <ClCompile Include="TimeCheck.cpp" />
     <ClCompile Include="TimeManager.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Util.cpp" />
@@ -204,8 +208,11 @@
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameBoard.h" />
+    <ClInclude Include="GameButton.h" />
     <ClInclude Include="GameNode.h" />
     <ClInclude Include="GameScene.h" />
+    <ClInclude Include="GameSpeedButton.h" />
+    <ClInclude Include="GameStateButton.h" />
     <ClInclude Include="GameSystem.h" />
     <ClInclude Include="GrayDice.h" />
     <ClInclude Include="GreenDice.h" />
@@ -226,6 +233,7 @@
     <ClInclude Include="State.h" />
     <ClInclude Include="StateManager.h" />
     <ClInclude Include="StateType.h" />
+    <ClInclude Include="TimeCheck.h" />
     <ClInclude Include="TimeManager.h" />
     <ClInclude Include="Util.h" />
     <ClInclude Include="Timer.h" />

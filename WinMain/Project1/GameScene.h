@@ -19,8 +19,8 @@ private:
 	Enemy* enemy;
 	DiceCreateButton* dcButtom;
 
-	std::list<Enemy*> enemyList;
-	std::list<Enemy*>::iterator it;
+	std::list<std::pair<int, Enemy*>> enemyList;
+	std::list<std::pair<int, Enemy*>>::iterator it;
 	eGameType _type;
 private:
 	POINT ptGameLine1;
@@ -40,7 +40,9 @@ private:
 	int iEnemyStartX;
 	int iEnemyStartY;
 private:
-	
+	float fDeltaTime;
+	int iCount;
+	int iRound;
 public:
 	GameScene();
 	~GameScene();
@@ -50,3 +52,5 @@ public:
 	void Update();
 	void Render(HDC hdc);
 };
+
+static DWORD CALLBACK ThreadFunction(LPVOID lpParam);

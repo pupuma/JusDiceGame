@@ -7,11 +7,12 @@ Bullet::Bullet(COLORREF _color)
 {
 	isLive = false;
 	isFire = false;
-	fSpeed = 5.0f;
+	fSpeed = 6.0f;
 	isCollision = false;
 	fSaveAngle = 0;
 	color = _color;
 	iDamage = 1;
+	GAMESYS->SetSpeed(fSpeed);
 }
 
 
@@ -36,6 +37,24 @@ bool Bullet::Init(int _x, int _y)
 	return true;
 }
 
+bool Bullet::Init(int _x, int _y, float _speedUp)
+{
+	isLive = false;
+	iStartPosX = _x;
+	iStartPosY = _y;
+
+	iPosX = iStartPosX;
+	iPosY = iStartPosY;
+
+	iWidth = 14;
+	iHeight = 12;
+
+	rcBullet = RectMakeCenter(iPosX, iPosY, iWidth, iHeight);
+	fSpeed = fSpeed + _speedUp;
+
+	return true;
+}
+
 void Bullet::Update()
 {
 
@@ -52,16 +71,24 @@ void Bullet::Render(HDC hdc)
 #endif//
 }
 
+void Bullet::Fire()
+{
+	isFire = true;
+	fSpeed = GAMESYS->GraySpeed();
+}
+
 void Bullet::Fire(RECT _rcTarget)
 {
 
 	isFire = true;
+
 	//targetX = _rcTarget.left + ((_rcTarget.right - _rcTarget.left) / 2);
 	//targetY = _rcTarget.top + ((_rcTarget.bottom - _rcTarget.top) / 2);
 	
 
 
 }
+
 
 void Bullet::Fire(RECT _rcTarget,POINT _pt)
 {
@@ -71,8 +98,16 @@ void Bullet::Fire(RECT _rcTarget,POINT _pt)
 
 }
 
+void Bullet::Fire(POINT _pt)
+{
+	isFire = true;
+	fSpeed = GAMESYS->GraySpeed();
+}
+
+
 void Bullet::BulletMove(RECT _rcTarget)
 {
+	//fSpeed = GAMESYS->GetSpeed();
 
 	targetX = _rcTarget.left + ((_rcTarget.right - _rcTarget.left) / 2);
 	targetY = _rcTarget.top + ((_rcTarget.bottom - _rcTarget.top) / 2);
@@ -87,6 +122,8 @@ void Bullet::BulletMove(RECT _rcTarget)
 
 	fAngle = UTIL::GetAngle(bulletX, bulletY,targetX, targetY);
 
+	
+
 	iPosX = iPosX + cosf(fAngle) * fSpeed;
 	iPosY = iPosY + -sinf(fAngle)  * fSpeed;
 
@@ -95,6 +132,30 @@ void Bullet::BulletMove(RECT _rcTarget)
 
 	rcBullet = RectMakeCenter(pt.x, pt.y, iWidth, iHeight);
 }
+
+void Bullet::BulletMove(POINT _ptTarget)
+{
+	ptSave.x = _ptTarget.x;
+	ptSave.y = _ptTarget.y;
+
+	bulletX = static_cast<float>(iPosX);
+	bulletY = static_cast<float>(iPosY);
+
+	fSaveAngle = fAngle;
+
+	fAngle = UTIL::GetAngle(bulletX, bulletY, _ptTarget.x, _ptTarget.y);
+
+
+
+	iPosX = iPosX + cosf(fAngle) * fSpeed;
+	iPosY = iPosY + -sinf(fAngle)  * fSpeed;
+
+	pt.x = iPosX;
+	pt.y = iPosY;
+
+	rcBullet = RectMakeCenter(pt.x, pt.y, iWidth, iHeight);
+}
+
 
 void Bullet::ResetPosition()
 {

@@ -25,7 +25,7 @@ private:
 	int iDestSelectNumber;
 
 	TCHAR str[256];
-
+	float fClickedTime;
 private:
 	RECT rcTest[GAMEBOARDSIZE];
 	int index;
@@ -61,6 +61,8 @@ public:
 	bool Init(int _width, int _height);
 	void Update();
 	void Render(HDC hdc);
+public:
+	void RedRender(HDC hdc);
 public:
 	RECT GetRectGameBoard() { return rcGameBoard; }
 };

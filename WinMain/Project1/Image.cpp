@@ -207,7 +207,7 @@ bool Image::Init(const TCHAR * fileName, float x, float y, int width, int height
 
 	_blendFunc.BlendFlags = 0;
 	_blendFunc.AlphaFormat = 0;
-	_blendFunc.BlendOp + AC_SRC_OVER;
+	_blendFunc.BlendOp = AC_SRC_OVER;
 
 	_blendImage = new IMAGE_INFO;
 	_blendImage->loadType = LOAD_EMPTY;
@@ -264,7 +264,7 @@ bool Image::Init(const TCHAR * fileName, int width, int height, int frameX, int 
 
 	_blendFunc.BlendFlags = 0;
 	_blendFunc.AlphaFormat = 0;
-	_blendFunc.BlendOp + AC_SRC_OVER;
+	_blendFunc.BlendOp = AC_SRC_OVER;
 
 	_blendImage = new IMAGE_INFO;
 	_blendImage->loadType = LOAD_EMPTY;

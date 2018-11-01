@@ -5,6 +5,8 @@
 class GreenDice
 	: public Dice
 {
+private:
+	int iPoisonDamge;
 public:
 	GreenDice();
 	~GreenDice();

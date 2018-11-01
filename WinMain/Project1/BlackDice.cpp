@@ -9,6 +9,10 @@ BlackDice::BlackDice()
 {
 	diceType = eDiceColor::DICE_BLACK;
 	color = RGB(18, 39, 59);
+	sa = eStateAbnormal::SA_DIE;
+	iProbability =50;
+
+
 }
 
 
@@ -24,6 +28,9 @@ bool BlackDice::Init(int _x, int _y, RECT _rcGameBoard)
 
 		//_image = IMAGEMANAGER->FindImage(TEXT("TestDice"));
 		_image->Init(TEXT("../../Resource/BMP/DiceOff.bmp"), 438, 62, 6, 1, true, COLOR_M);
+
+		_imageOn = new Image();
+		_imageOn->Init(TEXT("../../Resource/BMP/DiceOn.bmp"), 438, 62, 6, 1, true, COLOR_M);
 	}
 
 	//Bullet Create
@@ -77,4 +84,5 @@ bool BlackDice::Init(int _x, int _y, RECT _rcGameBoard)
 
 void BlackDice::DiceAbility()
 {
+	GAMESYS->SetProbabilitySize(iProbability);
 }

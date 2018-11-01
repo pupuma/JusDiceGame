@@ -21,6 +21,8 @@ class Dice
 {
 protected:
 	eStateType stateType;
+	eStateAbnormal sa;
+	float radius;
 protected:
 	 struct tagLevelPosition
 	{
@@ -37,11 +39,15 @@ protected:
 	//Bullet* bullet[MAXBULLET];
 	std::vector<Bullet*> bulletList;
 	std::vector<Bullet*>::iterator it;
+	//std::pair<int, RECT> _target;
+	std::pair<int, POINT> _target;
 protected:
 	eDiceColor diceType;
 	tagLevelPosition levelPos;
+	
 protected:
 	Image* _image;
+	Image* _imageOn;
 	POINT ptDiceCenterPos;
 	POINT ptDicePos;
 	POINT ptSave;
@@ -50,6 +56,7 @@ protected:
 	RECT rcGameBoard;
 	//RECT targetRect;
 	RECT rcTarget;
+	BYTE blackKey;
 protected:
 	int iDiceStartX;
 	int iDiceStartY;
@@ -62,9 +69,14 @@ protected:
 	int iDiceIndex;
 	float fCoolTime;
 	int iAttackPoint;
+
 protected:
 	bool isClick;
 	bool isLive;
+	bool isDiceOn;
+	bool isTarget;
+	bool isChain;
+
 protected:
 	COLORREF color;
 public:
@@ -76,10 +88,13 @@ public:
 	virtual bool Init(int _x, int _y, RECT _rcGameBoard);
 	bool Init(int _x, int _y, RECT _rcGameBoard, eDiceColor _color);
 
-	void Update();
-	void Render(HDC hdc);
+	virtual void Update();
+	virtual void Render(HDC hdc);
 public:
+	virtual void CircleRender(HDC hdc);
+
 	void DiceLevelBullet(int _level, int _x , int _y);
+
 	void DiceLevelBulletUpdate(int _level, int _x, int _y);
 
 	void LevelDiceRender(HDC hdc);
@@ -106,5 +121,13 @@ public:
 	eDiceColor GetColor() { return diceType; }
 	int GetAttackPoint() { return iAttackPoint; }
 	POINT GetSavePos() { return ptSave; }
-	
+	eStateAbnormal GetStateAbnormalEffect() { return sa; }
+
+	float GetRadius() { return radius; }
+
+	void SetDiceOn(bool _isDiceOn) { isDiceOn = _isDiceOn; }
+	void SetTargeting(bool _isTarget) { isTarget = _isTarget;}
+	bool IsTargeting() { return isTarget; }
+	void SetChain(bool _chain) { isChain = _chain; }
+	bool IsChain() { return isChain; }
 };

@@ -4,6 +4,8 @@
 class BlueDice
 	: public Dice
 {
+private:
+	float fSlow;
 public:
 	BlueDice();
 	~BlueDice();

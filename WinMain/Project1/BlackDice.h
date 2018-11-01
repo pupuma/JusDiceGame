@@ -5,6 +5,8 @@
 class BlackDice 
 	: public Dice
 {
+private:
+	int iProbability;
 public:
 	BlackDice();
 	~BlackDice();
