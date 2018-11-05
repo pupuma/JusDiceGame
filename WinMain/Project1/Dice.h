@@ -5,17 +5,6 @@
 class Bullet;
 class State;
 
-enum eDiceColor
-{
-	DICE_BLUE,
-	DICE_RED,
-	DICE_GREEN,
-	DICE_YELLOW,
-	DICE_GRAY,
-	DICE_BLACK,
-	DICE_NONE,
-
-};
 
 class Dice
 {
@@ -35,11 +24,10 @@ protected:
 		RECT rcLevel5[5];
 		RECT rcLevel6[6];
 	};
+	 
 protected:
-	//Bullet* bullet[MAXBULLET];
 	std::vector<Bullet*> bulletList;
 	std::vector<Bullet*>::iterator it;
-	//std::pair<int, RECT> _target;
 	std::pair<int, POINT> _target;
 protected:
 	eDiceColor diceType;
@@ -51,10 +39,10 @@ protected:
 	POINT ptDiceCenterPos;
 	POINT ptDicePos;
 	POINT ptSave;
+	POINT ptPrev;
 protected:
 	RECT rcDice;
 	RECT rcGameBoard;
-	//RECT targetRect;
 	RECT rcTarget;
 	BYTE blackKey;
 protected:
@@ -69,14 +57,13 @@ protected:
 	int iDiceIndex;
 	float fCoolTime;
 	int iAttackPoint;
-
 protected:
 	bool isClick;
 	bool isLive;
 	bool isDiceOn;
 	bool isTarget;
 	bool isChain;
-
+	float fBulletCoolTIme;
 protected:
 	COLORREF color;
 public:
@@ -88,11 +75,12 @@ public:
 	virtual bool Init(int _x, int _y, RECT _rcGameBoard);
 	bool Init(int _x, int _y, RECT _rcGameBoard, eDiceColor _color);
 
+	virtual void Release();
 	virtual void Update();
 	virtual void Render(HDC hdc);
 public:
 	virtual void CircleRender(HDC hdc);
-
+	virtual void ChainRender(HDC hdc);
 	void DiceLevelBullet(int _level, int _x , int _y);
 
 	void DiceLevelBulletUpdate(int _level, int _x, int _y);

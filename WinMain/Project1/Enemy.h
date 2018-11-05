@@ -1,22 +1,43 @@
 #pragma once
 
-enum eEnemyType
-{
-	ENEMY_NONE,
-	ENEMY_BOSS,
-};
+class Animation;
 
 class Enemy
 {
 private:
+	Image* slowImg1;
+	Image* slowImg2;
+	Image* slowImg3;
+	Animation* slowAni1;
+	Animation* slowAni2;
+	Animation* slowAni3;
+
+
+	Image* poisonImg1;
+	Image* poisonImg2;
+	Image* poisonImg3;
+	Animation* poisonAni1;
+	Animation* poisonAni2;
+	Animation* poisonAni3;
+
+	std::vector<Image*> slowList;
+	std::vector<Image*> poisonList;
+
+private:
 	int iHp;
 	bool isLive;
 	bool activate;
+	bool isDead;
+	int iSlowCount;
+	int poisonNumber;
 private:
+	
 	int iPosX;
 	int iPosY;
 	int iStartX;
 	int iStartY;
+	int iWidth;
+	int iHeight;
 
 	int iNomalWidth;
 	int iNomalHeight;
@@ -54,12 +75,14 @@ private:
 	eStateAbnormal sa;
 private:
 	TimeCheck* test;
+	int multiSpeed;
 public:
 	Enemy();
 	~Enemy();
 public:
 	bool Init();
-	bool Init(int _y);
+	bool Init(int _y ,eEnemyType _type);
+	void Release();
 	void Update();
 	void Render(HDC hdc);
 public:
@@ -69,7 +92,7 @@ public:
 	void StateAbnormalEffect(int _posX, int _posY);
 	void Poison(int _posX, int _posY);
 	void Slow(int _posX, int _posY);
-	
+	void SetHp(int _hp);
 public:
 	RECT GetEnemyRect() { return rcEnemy; }
 	int GetHeight() { return iNomalHeight; }
@@ -81,6 +104,7 @@ public:
 	void SetLive(bool _isLive) { isLive = _isLive; }
 	bool GetActivate() { return activate; }
 	void SetActivate(bool act) { activate = act; }
+	bool IsDead() { return isDead; }
 
 };
 

@@ -10,7 +10,7 @@
 //#define _CAMERA_TEST
 //#define _PIXEL_TEST
 //#define _EFFECT_TEST
-#define _DEBUG_TEST
+//#define _DEBUG_TEST
 
 #if defined(_UNICODE)
 typedef  std::wstring		tstring;  //std::basic_string<wchar>
@@ -51,3 +51,5 @@ typedef  std::string		tstring;   //std::basic_string<char>
 #define SOUNDMANAGER	SoundManager::GetSingleton()
 #define GAMESYS			GameSystem::GetSingleton()
 #define STATEMANAGER	StateManager::GetSingleton()
+#define FONTMANAGER		FontManager::GetSingleton()
+#define DICEMANAGER		DiceManager::GetSingleton()

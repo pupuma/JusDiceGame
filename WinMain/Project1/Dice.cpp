@@ -10,14 +10,10 @@ Dice::Dice()
 	isChain = false;
 
 	diceType = eDiceColor::DICE_NONE;
-	//_image = IMAGEMANAGER->FindImage(TEXT("TestDice"));
 	sa = eStateAbnormal::SA_NONE;
 	iLevel =1; 
 	isClick = false;
 	iAttackPoint =1;
-	// Test
-	//targetRect = RectMakeCenter(59, 60, 54, 44);
-
 	fCoolTime = 3.0f;
 	iIndex = 0;
 	stateType = eStateType::STATE_NONE;
@@ -26,6 +22,7 @@ Dice::Dice()
 	radius = 7;
 	isDiceOn = false;
 	isTarget = false;
+	fBulletCoolTIme = 1.0f;
 }
 
 
@@ -47,6 +44,7 @@ bool Dice::Init()
 
 
 		_image = IMAGEMANAGER->AddFrameImage(TEXT("TestDice"), TEXT("../../Resource/BMP/DiceOff.bmp"), 438, 62, 6, 1, true, COLOR_M);
+
 		_image->SetX(ptDiceCenterPos.x);
 		_image->SetY(ptDiceCenterPos.y);
 
@@ -105,10 +103,7 @@ bool Dice::Init(int _x, int _y, RECT _rcGameBoard)
 			bulletList.push_back(bullet);
 		}
 
-		//for (int i = 0; i < MAXBULLET; i++)
-		//{
-		//	bulletList[i]->Fire(targetRect);
-		//}
+	
 		
 	}
 	// Init
@@ -121,7 +116,6 @@ bool Dice::Init(int _x, int _y, RECT _rcGameBoard)
 		ptDiceCenterPos.y = _y;
 
 		rcDice = RectMakeCenter(ptDiceCenterPos.x, ptDiceCenterPos.y, iDiceWidth, iDiceHeight);
-
 
 		_image->SetX(rcDice.left);
 		_image->SetY(rcDice.top);
@@ -202,6 +196,16 @@ bool Dice::Init(int _x, int _y, RECT _rcGameBoard, eDiceColor _color)
 
 
 	return true;
+}
+void Dice::Release()
+{
+	for (int i = 0; i < MAXBULLET; i++)
+	{
+		SAFE_DELETE(bulletList[i]);
+	}
+	//SAFE_DELETE(_image);
+	//SAFE_DELETE(_imageOn);
+
 }
 void Dice::Update()
 {
@@ -316,8 +320,23 @@ void Dice::Update()
 				{
 					if (bulletList[iDiceIndex]->IsFire())
 					{
+						ptPrev.x = bulletList[iDiceIndex]->GetBulletCenterX();
+						ptPrev.y = bulletList[iDiceIndex]->GetBulletCenterX();
+
 						bulletList[iDiceIndex]->BulletMove(_target.second);
 					}
+				}
+			}
+
+			{
+				if (ptPrev.x == bulletList[iDiceIndex]->GetBulletCenterX() &&
+					ptPrev.y == bulletList[iDiceIndex]->GetBulletCenterY())
+				{
+					bulletList[iDiceIndex]->SetFire(false);
+					bulletList[iDiceIndex]->SetCollision(false);
+					GAMESYS->DiceEffect(diceType, bulletList[iDiceIndex]->GetBulletCenterX(), bulletList[iDiceIndex]->GetBulletCenterY());
+					bulletList[iDiceIndex]->ResetPosition();
+
 				}
 			}
 
@@ -330,17 +349,41 @@ void Dice::Update()
 			{
 				if (bulletList[iDiceIndex]->IsCollision())
 				{
-					bulletList[iDiceIndex]->SetCollision(false);
-					iDiceIndex++;
-					if (iDiceIndex >= iLevel)
+					if (bulletList[iLevel - 1]->IsCollision())
 					{
-						iDiceIndex = 0;
+						fBulletCoolTIme -= TIMEMANAGER->GetElapsedTime();
+						if (fBulletCoolTIme <= 0)
+						{
+							bulletList[iDiceIndex]->SetCollision(false);
+							bulletList[iDiceIndex]->ResetPosition();
+
+
+							iDiceIndex++;
+							if (iDiceIndex >= iLevel)
+							{
+								iDiceIndex = 0;
+							}
+							DiceFirePos(GetDiceLevel(), rcDice.left, rcDice.top);
+							bulletList[iDiceIndex]->Fire();
+
+							fBulletCoolTIme = 1.0f;
+						}
 					}
-					DiceFirePos(GetDiceLevel(), rcDice.left, rcDice.top);
+					else
+					{
+						bulletList[iDiceIndex]->SetCollision(false);
+						bulletList[iDiceIndex]->ResetPosition();
 
-					
 
-					bulletList[iDiceIndex]->Fire(_target.second);
+						iDiceIndex++;
+						if (iDiceIndex >= iLevel)
+						{
+							iDiceIndex = 0;
+						}
+						DiceFirePos(GetDiceLevel(), rcDice.left, rcDice.top);
+						bulletList[iDiceIndex]->Fire();
+					}
+
 				}
 			}
 
@@ -348,70 +391,6 @@ void Dice::Update()
 		}
 
 
-		//====================================================================================================
-
-		//{
-		//	if (GAMESYS->IsEnemyActivate())
-		//	{
-		//		if (!GAMESYS->IsEnemyEmpty())
-		//		{
-		//			rcTarget = GAMESYS->GetRectEnemy();
-		//		}
-
-		//	}
-		//}
-
-		//{
-		//	if (!GAMESYS->IsEnemyEmpty())
-		//	{
-		//		if (GAMESYS->IsEnemyActivate())
-		//		{
-
-		//			if (!bulletList[0]->IsFire() &&
-		//				!bulletList[1]->IsFire() &&
-		//				!bulletList[2]->IsFire() &&
-		//				!bulletList[3]->IsFire() &&
-		//				!bulletList[4]->IsFire() &&
-		//				!bulletList[5]->IsFire())
-		//			{
-		//				if (!bulletList[0]->IsCollision() &&
-		//					!bulletList[1]->IsCollision() &&
-		//					!bulletList[2]->IsCollision() &&
-		//					!bulletList[3]->IsCollision() &&
-		//					!bulletList[4]->IsCollision() &&
-		//					!bulletList[5]->IsCollision())
-		//				{
-		//					iDiceIndex = 0;
-		//					ptSave = DiceStartFirePos(GetDiceLevel(), rcDice.left, rcDice.top);
-		//					bulletList[iDiceIndex]->Fire(rcTarget, ptSave);
-		//				}
-
-		//			}
-
-
-
-		//			// 발사 이동 
-		//			if (bulletList[iDiceIndex]->IsFire())
-		//			{
-		//				bulletList[iDiceIndex]->BulletMove(rcTarget);
-		//			}
-
-		//			if (bulletList[iDiceIndex]->IsCollision())
-		//			{
-		//				bulletList[iDiceIndex]->SetCollision(false);
-		//				iDiceIndex++;
-		//				if (iDiceIndex >= iLevel)
-		//				{
-		//					iDiceIndex = 0;
-		//				}
-		//				DiceFirePos(GetDiceLevel(), rcDice.left, rcDice.top);
-		//				bulletList[iDiceIndex]->Fire(rcTarget);
-		//			}
-				//}
-		//	}
-		//
-		//}
-			
 	}
 
 	
@@ -429,20 +408,12 @@ void Dice::Render(HDC hdc)
 	{
 		_imageOn->FrameRender(hdc, rcDice.left, rcDice.top);
 	}
-	//DrawObject(hdc, rcDice, 1, RGB(125, 125, 3), RECTANGLE);
 	LevelDiceRender(hdc);
 
 
 	//  DrawBullet
 	{
 		RenderBullet(hdc);
-		//for (int i = 0; i < MAXBULLET; i++)
-		//{
-		//	if (bulletList[i]->IsFire())
-		//	{
-		//		bulletList[i]->Render(hdc);
-		//	}
-		//}
 	}
 
 
@@ -451,6 +422,10 @@ void Dice::Render(HDC hdc)
 }
 
 void Dice::CircleRender(HDC hdc)
+{
+}
+
+void Dice::ChainRender(HDC hdc)
 {
 }
 

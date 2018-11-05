@@ -13,6 +13,7 @@ Bullet::Bullet(COLORREF _color)
 	color = _color;
 	iDamage = 1;
 	GAMESYS->SetSpeed(fSpeed);
+	
 }
 
 
@@ -64,10 +65,13 @@ void Bullet::Update()
 
 void Bullet::Render(HDC hdc)
 {
-	DrawObject(hdc, rcBullet, 1, color, ELLIPSE);
+	if (isFire)
+	{
+		DrawObject(hdc, rcBullet, 1, color, ELLIPSE);
+	}
 
 #if defined(_DEBUG_TEST)
-	DrawLine(hdc, ptSave, pt, 1, RGB(255, 0, 0));
+	//DrawLine(hdc, ptSave, pt, 1, RGB(255, 0, 0));
 #endif//
 }
 
@@ -81,12 +85,6 @@ void Bullet::Fire(RECT _rcTarget)
 {
 
 	isFire = true;
-
-	//targetX = _rcTarget.left + ((_rcTarget.right - _rcTarget.left) / 2);
-	//targetY = _rcTarget.top + ((_rcTarget.bottom - _rcTarget.top) / 2);
-	
-
-
 }
 
 
@@ -146,9 +144,9 @@ void Bullet::BulletMove(POINT _ptTarget)
 	fAngle = UTIL::GetAngle(bulletX, bulletY, _ptTarget.x, _ptTarget.y);
 
 
-
-	iPosX = iPosX + cosf(fAngle) * fSpeed;
-	iPosY = iPosY + -sinf(fAngle)  * fSpeed;
+	int multiSpeed = GAMESYS->GetMultiSpeed();
+	iPosX = iPosX + cosf(fAngle) * fSpeed * multiSpeed;
+	iPosY = iPosY + -sinf(fAngle)  * fSpeed * multiSpeed;
 
 	pt.x = iPosX;
 	pt.y = iPosY;

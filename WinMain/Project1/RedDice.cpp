@@ -9,9 +9,11 @@ RedDice::RedDice()
 	diceType = eDiceColor::DICE_RED;
 	color = RGB(228, 58, 40);
 	isFire = false;
-	r = 100;
+	r = DICEMANAGER->GetRedDiceEffectPower();
 	fDeltaTime = 0.01f;
 	colorKey = 220;
+
+
 }
 
 
@@ -26,7 +28,6 @@ bool RedDice::Init(int _x, int _y, RECT _rcGameBoard)
 		rcGameBoard = _rcGameBoard;
 		_image = new Image();
 
-		//_image = IMAGEMANAGER->FindImage(TEXT("TestDice"));
 		_image->Init(TEXT("../../Resource/BMP/DiceOff.bmp"), 438, 62, 6, 1, true, COLOR_M);
 
 		_imageOn = new Image();
@@ -34,8 +35,7 @@ bool RedDice::Init(int _x, int _y, RECT _rcGameBoard)
 
 		
 		
-		//circleImg->SetWidth(r);
-		//circleImg->SetHeight(r);
+	
 	}
 
 	//Bullet Create
@@ -47,10 +47,6 @@ bool RedDice::Init(int _x, int _y, RECT _rcGameBoard)
 			bulletList.push_back(bullet);
 		}
 
-		//for (int i = 0; i < MAXBULLET; i++)
-		//{
-		//	bulletList[i]->Fire(targetRect);
-		//}
 
 	}
 	// Init
@@ -69,7 +65,6 @@ bool RedDice::Init(int _x, int _y, RECT _rcGameBoard)
 
 
 		// 이미지 색 
-		//diceType = _color;
 		_image->SetFrameX((diceType));
 
 	}
@@ -82,13 +77,26 @@ bool RedDice::Init(int _x, int _y, RECT _rcGameBoard)
 		DiceLevelBullet(GetDiceLevel(), ptDicePos.x, ptDicePos.y);
 	}
 
-
+	{
+		iAttackPoint = DICEMANAGER->GetRedDiceDamage();
+	}
 	return true;
+}
+
+void RedDice::Release()
+{
+	Dice::Release();
+
+	SAFE_DELETE(circleImg);
+	SAFE_DELETE(bulletRedImg);
+
 }
 
 void RedDice::Update()
 {
-
+	{
+		iAttackPoint = DICEMANAGER->GetRedDiceDamage();
+	}
 	{
 		if (rcGameBoard.left >= (ptDiceCenterPos.x - iDiceWidth / 2))
 		{
@@ -195,10 +203,16 @@ void RedDice::Update()
 			{
 				if (bulletList[iDiceIndex]->IsFire())
 				{
+					
 					bulletList[iDiceIndex]->BulletMove(_target.second);
-					GAMESYS->SetFire(false);
-
 				}
+			}
+		}
+
+		{
+			if (isTarget)
+			{
+				_target = GAMESYS->TargetUpdate(_target);
 			}
 		}
 
@@ -211,17 +225,41 @@ void RedDice::Update()
 		{
 			if (bulletList[iDiceIndex]->IsCollision())
 			{
-				bulletList[iDiceIndex]->SetCollision(false);
-				iDiceIndex++;
-				if (iDiceIndex >= iLevel)
+				if (bulletList[iLevel - 1]->IsCollision())
 				{
-					iDiceIndex = 0;
+					fBulletCoolTIme -= TIMEMANAGER->GetElapsedTime();
+					if (fBulletCoolTIme <= 0)
+					{
+						bulletList[iDiceIndex]->SetCollision(false);
+
+						bulletList[iDiceIndex]->ResetPosition();
+						iDiceIndex++;
+						if (iDiceIndex >= iLevel)
+						{
+							iDiceIndex = 0;
+						}
+						DiceFirePos(GetDiceLevel(), rcDice.left, rcDice.top);
+						bulletList[iDiceIndex]->Fire();
+
+						fBulletCoolTIme = 1.0f;
+					}
 				}
-				DiceFirePos(GetDiceLevel(), rcDice.left, rcDice.top);
+				else
+				{
+					bulletList[iDiceIndex]->SetCollision(false);
+
+					bulletList[iDiceIndex]->ResetPosition();
 
 
+					iDiceIndex++;
+					if (iDiceIndex >= iLevel)
+					{
+						iDiceIndex = 0;
+					}
+					DiceFirePos(GetDiceLevel(), rcDice.left, rcDice.top);
+					bulletList[iDiceIndex]->Fire();
+				}
 
-				bulletList[iDiceIndex]->Fire(_target.second);
 			}
 		}
 
@@ -240,89 +278,12 @@ void RedDice::Update()
 			{
 				colorKey = 0;
 				isFire = false;
-				//circleImg->Release();
-				//elete circleImg;
+				
 			}
 		}
 
 	}
 
-
-	//	
-
-	//	{
-	//		if (!GAMESYS->IsEnemyEmpty())
-	//		{
-	//			if (GAMESYS->IsEnemyActivate())
-	//			{
-
-	//				if (!bulletList[0]->IsFire() &&
-	//					!bulletList[1]->IsFire() &&
-	//					!bulletList[2]->IsFire() &&
-	//					!bulletList[3]->IsFire() &&
-	//					!bulletList[4]->IsFire() &&
-	//					!bulletList[5]->IsFire())
-	//				{
-	//					if (!bulletList[0]->IsCollision() &&
-	//						!bulletList[1]->IsCollision() &&
-	//						!bulletList[2]->IsCollision() &&
-	//						!bulletList[3]->IsCollision() &&
-	//						!bulletList[4]->IsCollision() &&
-	//						!bulletList[5]->IsCollision())
-	//					{
-	//						iDiceIndex = 0;
-	//						ptSave = DiceStartFirePos(GetDiceLevel(), rcDice.left, rcDice.top);
-	//						bulletList[iDiceIndex]->Fire(rcTarget, ptSave);
-	//					}
-
-	//				}
-
-
-
-	//				// 발사 이동 
-	//				if (bulletList[iDiceIndex]->IsFire())
-	//				{
-	//					bulletList[iDiceIndex]->BulletMove(_target.second);
-	//					//isFire = false;
-	//					GAMESYS->SetFire(false);
-	//				}
-
-	//				if (bulletList[iDiceIndex]->IsCollision())
-	//				{
-	//					bulletList[iDiceIndex]->SetCollision(false);
-	//					iDiceIndex++;
-	//					if (iDiceIndex >= iLevel)
-	//					{
-	//						iDiceIndex = 0;
-	//					}
-	//					DiceFirePos(GetDiceLevel(), rcDice.left, rcDice.top);
-	//					bulletList[iDiceIndex]->Fire(rcTarget);
-	//				}
-	//			}
-	//		}
-
-	//	}
-
-	//}
-
-	//{
-	//	fDeltaTime -= TIMEMANAGER->GetElapsedTime();
-	//	if (fDeltaTime <= 0)
-	//	{
-	//		colorKey -= (BYTE)10;
-	//		
-	//		fDeltaTime = 0.01f;
-	//	}
-	//	
-	//	
-	//	if (colorKey <= 0)
-	//	{
-	//		colorKey = 0;
-	//		isFire = false;
-	//		//circleImg->Release();
-	//		//elete circleImg;
-	//	}
-	//}
 
 }
 
@@ -337,7 +298,6 @@ void RedDice::Render(HDC hdc)
 		_imageOn->FrameRender(hdc, rcDice.left, rcDice.top);
 	}
 
-	//DrawObject(hdc, rcDice, 1, RGB(125, 125, 3), RECTANGLE);
 	LevelDiceRender(hdc);
 
 	//  DrawBullet
@@ -345,10 +305,7 @@ void RedDice::Render(HDC hdc)
 		RenderBullet(hdc);
 	}
 
-	{
-		//CircleRender(hdc);
-		
-	}
+
 
 }
 
@@ -356,7 +313,6 @@ void RedDice::CircleRender(HDC hdc)
 {
 	if (isFire)
 	{
-		//DrawObject(hdc, rcCircleFire, 1, RGB(200, 58, 40), ELLIPSE);
 		circleImg->AlphaRender(hdc, pt.x - r / 2, pt.y - r / 2, colorKey);
 
 	}
@@ -368,7 +324,7 @@ void RedDice::DiceAbility()
 	GAMESYS->SetFire(isFire);
 	GAMESYS->SetCircleFireRadius(r);
 	pt = { bulletList[iDiceIndex]->GetBulletCenterX(), bulletList[iDiceIndex]->GetBulletCenterY() };
-
+	r = DICEMANAGER->GetRedDiceEffectPower();
 
 	circleImg = new Image();
 	circleImg->Init(TEXT("../../Resource/BMP/BulletRed.bmp"), r, r, true, COLOR_M);

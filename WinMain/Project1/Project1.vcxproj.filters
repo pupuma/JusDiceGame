@@ -88,6 +88,12 @@
     <Filter Include="MainGame\02.Object\Character\Dice\DiceType">
       <UniqueIdentifier>{f4d4571b-ece8-4f7e-b3b7-6ffd9c2c83cf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MainGame\02.Object\GameButton\Func">
+      <UniqueIdentifier>{2bd123cc-2ed9-46d1-a302-04f9a64127f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MainGame\02.Object\UI">
+      <UniqueIdentifier>{2c4f3d46-5ebc-4ed2-b5be-cff528c753ba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinMain.cpp">
@@ -215,6 +221,39 @@
     </ClCompile>
     <ClCompile Include="TimeCheck.cpp">
       <Filter>2DFrameWork\Utill</Filter>
+    </ClCompile>
+    <ClCompile Include="FontManager.cpp">
+      <Filter>2DFrameWork\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="DiceFuncButtom.cpp">
+      <Filter>MainGame\02.Object\GameButton</Filter>
+    </ClCompile>
+    <ClCompile Include="RedDiceFuncButtom.cpp">
+      <Filter>MainGame\02.Object\GameButton\Func</Filter>
+    </ClCompile>
+    <ClCompile Include="BlueDiceFuncButtom.cpp">
+      <Filter>MainGame\02.Object\GameButton\Func</Filter>
+    </ClCompile>
+    <ClCompile Include="BlackDiceFuncButtom.cpp">
+      <Filter>MainGame\02.Object\GameButton\Func</Filter>
+    </ClCompile>
+    <ClCompile Include="GrayDiceFuncButtom.cpp">
+      <Filter>MainGame\02.Object\GameButton\Func</Filter>
+    </ClCompile>
+    <ClCompile Include="YellowDiceFuncButtom.cpp">
+      <Filter>MainGame\02.Object\GameButton\Func</Filter>
+    </ClCompile>
+    <ClCompile Include="DiceFuctionUI.cpp">
+      <Filter>MainGame\02.Object\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GreenDiceFuncButtom.cpp">
+      <Filter>MainGame\02.Object\GameButton\Func</Filter>
+    </ClCompile>
+    <ClCompile Include="DiceManager.cpp">
+      <Filter>2DFrameWork\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="LogoScene.cpp">
+      <Filter>MainGame\01.Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -361,6 +400,39 @@
     </ClInclude>
     <ClInclude Include="TimeCheck.h">
       <Filter>2DFrameWork\Utill</Filter>
+    </ClInclude>
+    <ClInclude Include="FontManager.h">
+      <Filter>2DFrameWork\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="BlackDiceFuncButtom.h">
+      <Filter>MainGame\02.Object\GameButton\Func</Filter>
+    </ClInclude>
+    <ClInclude Include="DiceFuncButtom.h">
+      <Filter>MainGame\02.Object\GameButton</Filter>
+    </ClInclude>
+    <ClInclude Include="RedDiceFuncButtom.h">
+      <Filter>MainGame\02.Object\GameButton\Func</Filter>
+    </ClInclude>
+    <ClInclude Include="BlueDiceFuncButtom.h">
+      <Filter>MainGame\02.Object\GameButton\Func</Filter>
+    </ClInclude>
+    <ClInclude Include="GrayDiceFuncButtom.h">
+      <Filter>MainGame\02.Object\GameButton\Func</Filter>
+    </ClInclude>
+    <ClInclude Include="YellowDiceFuncButtom.h">
+      <Filter>MainGame\02.Object\GameButton\Func</Filter>
+    </ClInclude>
+    <ClInclude Include="DiceFuctionUI.h">
+      <Filter>MainGame\02.Object\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="GreenDiceFuncButtom.h">
+      <Filter>MainGame\02.Object\GameButton\Func</Filter>
+    </ClInclude>
+    <ClInclude Include="DiceManager.h">
+      <Filter>2DFrameWork\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="LogoScene.h">
+      <Filter>MainGame\01.Scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

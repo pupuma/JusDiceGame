@@ -14,13 +14,13 @@
 
 GameSystem::GameSystem()
 {
+	iGold = 0;
 	iRound = 1;
 	iCount = 1;
 	iBossConstant = 10;
-	fCoolTime = 1.0f;
 	iEnemyHp = 1;
-
-
+	slowCount = 0;
+	poisonNumber = 0;
 	iDiceWidth = 73;
 	iDiceHeight = 60;
 	iDiceIndex = -1;
@@ -29,9 +29,12 @@ GameSystem::GameSystem()
 	fSpeedUp = 1.f;
 	iMaxSpeed = 30;
 	fSpeed = 5.0f;
-	fDeltaTime = 0.5f;
+	fDeltaTime =1.f;
 	chainCount = 2;
+	iEnemyCount = 0;
 	isEnemyActivate = false;
+	speedUp = 1;
+	g_State = GAMESTATE_NONE;
 }
 
 
@@ -80,23 +83,141 @@ bool GameSystem::Init()
 
 	}
 
-	//font
+
+
 	{
-	HFONT font = CreateFont(10, 0, 0, 0, 300, 0, 0, 0, DEFAULT_CHARSET,
-		OUT_STRING_PRECIS, CLIP_CHARACTER_PRECIS, PROOF_QUALITY, DEFAULT_PITCH | FF_SWISS, TEXT("Adobe Caslon Pro Bold"));
-	fontMap.insert({ TEXT("AdobeSS"), font });
+		for (int i = 0; i < 100; i++)
+		{
+			chain.chainAcitve = false;
+			chain.pt = { 0,0 };
+			chainList.push_back(chain);
+		}
+	}
+	return true;
+}
 
-	font = CreateFont(15, 0, 0, 0, 300, 0, 0, 0, DEFAULT_CHARSET,
-		OUT_STRING_PRECIS, CLIP_CHARACTER_PRECIS, PROOF_QUALITY, DEFAULT_PITCH | FF_SWISS, TEXT("Adobe Caslon Pro Bold"));
-	fontMap.insert({ TEXT("AdobeS"), font });
+void GameSystem::Release()
+{
+	// DiceList
+	for (it_Dice = g_DiceList.begin(); it_Dice != g_DiceList.end();  )
+	{
+		(*it_Dice).second->Release();
+		SAFE_DELETE((*it_Dice).second);
+		++it_Dice;
+	}
+	g_DiceList.clear();
+	// EnemyList
+	for (it_Enemy = enemyList.begin(); it_Enemy != enemyList.end();  )
+	{
+		(*it_Enemy).second->Release();
+		SAFE_DELETE((*it_Enemy).second);
+		++it_Enemy;
+	}
+	enemyList.clear();
+}
 
-	font = CreateFont(20, 0, 0, 0, 300, 0, 0, 0, DEFAULT_CHARSET,
-		OUT_STRING_PRECIS, CLIP_CHARACTER_PRECIS, PROOF_QUALITY, DEFAULT_PITCH | FF_SWISS, TEXT("Adobe Caslon Pro Bold"));
-	fontMap.insert({ TEXT("AdobeB"), font });
+void GameSystem::Update()
+{
+	{
+		if (!enemyList.empty())
+		{
+			it_Enemy = enemyList.begin();
+			if (!(*it_Enemy).second->GetActivate())
+			{
+				SetEnemyActivate(false);
+			}
+		}
 
 
 	}
-	return true;
+	{
+		if (!enemyList.empty())
+		{
+			for (it_Enemy = enemyList.begin(); it_Enemy != enemyList.end(); )
+			{
+				if (!(*it_Enemy).second->GetActivate())
+				{
+					break;
+				}
+
+				if ((*it_Enemy).second->IsDead())
+				{
+					EFFECTMANAGER->Play(TEXT("SkelEffect"), (*it_Enemy).second->GetPosX(), (*it_Enemy).second->GetPosY());
+				}
+
+				if ((*it_Enemy).second->GetHp() <= 0 || !(*it_Enemy).second->IsLive())
+				{
+					if (iRound % 10 != 0)
+					{
+						GoldGain();
+						iEnemyCount++;
+
+					}
+					else
+					{
+						iGold = iRound * 10 ;
+						iEnemyCount = iRound;
+					}
+					EFFECTMANAGER->Play(TEXT("Effect"), (*it_Enemy).second->GetPosX(), (*it_Enemy).second->GetPosY());
+
+					SAFE_DELETE((*it_Enemy).second);
+
+					it_Enemy = enemyList.erase(it_Enemy);
+					_dice->SetTargeting(false);
+					//_dice->GetBulletList()[_index]->SetFire(false);
+					//_dice->GetBulletList()[_index]->SetCollision(true);
+					//_dice->GetBulletList()[_index]->ResetPosition();
+				}
+				else
+				{
+					++it_Enemy;
+				}
+			}
+		}
+	}
+
+	{
+		if (g_State == GAMESTATE_IDLE)
+		{
+			SetEnemyActivate(false);
+			for (it_Dice = g_DiceList.begin(); it_Dice != g_DiceList.end(); it_Dice++)
+			{
+				(*it_Dice).second->SetTargeting(false);
+
+				for (int i = 0; i < 6; i++)
+				{
+					(*it_Dice).second->GetBulletList()[i]->SetFire(false);
+					(*it_Dice).second->GetBulletList()[i]->SetCollision(false);
+
+					if ((*it_Dice).second->GetBulletList()[i]->IsFire())
+					{
+						DiceEffect((*it_Dice).second->GetColor(),
+							(*it_Dice).second->GetBulletList()[i]->GetBulletCenterX(),
+							(*it_Dice).second->GetBulletList()[i]->GetBulletCenterY());
+					}
+					(*it_Dice).second->GetBulletList()[i]->ResetPosition();
+
+
+				}
+			}
+		}
+	}
+
+	if (g_State == GAMESTATE_START)
+	{
+		if (iEnemyCount == iRound)
+		{
+			if (q_Enemy.empty())
+			{
+				if (enemyList.empty())
+				{
+					g_State = GAMESTATE_IDLE;
+					iRound++;
+				}
+			}
+		}
+		
+	}
 }
 
 void GameSystem::EnemyUpdate()
@@ -133,12 +254,16 @@ void GameSystem::CollisionBullet(Dice* _dice, int _index, std::pair<int,POINT> _
 {
 	attackPoint = _dice->GetAttackPoint();
 	Dice* dice = NULL;
-	//float centerX = _pData.second.left + ((_pData.second.right - _pData.second.left) / 2);
-	//float centerY = _pData.second.top + ((_pData.second.bottom - _pData.second.top) / 2);
+	int iCount = 0;
+
+	{
+		
+	}
+
 
 	if (!enemyList.empty())
 	{
-		for (it_Enemy = enemyList.begin(); it_Enemy != enemyList.end(); it_Enemy++)
+		for (it_Enemy = enemyList.begin(); it_Enemy != enemyList.end(); it_Enemy++, iCount++)
 		{
 			if (_dice->GetBulletList()[_index]->IsFire())
 			{
@@ -156,43 +281,53 @@ void GameSystem::CollisionBullet(Dice* _dice, int _index, std::pair<int,POINT> _
 						(*it_Enemy).second->SetStateAbnormalEffect(_dice->GetStateAbnormalEffect());
 						DiceStateAdnormal(_dice);
 						attackPoint = _dice->GetAttackPoint();
-
-						if (_dice->GetColor() != eDiceColor::DICE_RED  && _dice->GetColor() != eDiceColor::DICE_YELLOW)
-						{
-							(*it_Enemy).second->DreaseHp(attackPoint);
-							_dice->GetBulletList()[_index]->SetFire(false);
-							_dice->GetBulletList()[_index]->SetCollision(true);
-							_dice->GetBulletList()[_index]->ResetPosition();
-							dice = _dice;
-
-						}
-						else
+						DiceEffect(_dice->GetColor(), _dice,_index);
+						if (_dice->GetColor() == eDiceColor::DICE_RED)
 						{
 							ptSave = { _dice->GetBulletList()[_index]->GetBulletCenterX(),
 										_dice->GetBulletList()[_index]->GetBulletCenterY() };
 							_dice->GetBulletList()[_index]->SetFire(false);
 							_dice->GetBulletList()[_index]->SetCollision(true);
-							_dice->GetBulletList()[_index]->ResetPosition();
+
+							//_dice->GetBulletList()[_index]->ResetPosition();
 							dice = _dice;
-
 						}
+						else if (_dice->GetColor() == eDiceColor::DICE_YELLOW)
+						{
 
+							_dice->GetBulletList()[_index]->SetFire(false);
+							_dice->GetBulletList()[_index]->SetCollision(true);
+							//_dice->GetBulletList()[_index]->ResetPosition();
+							dice = _dice;
+						}
+						else
+						{
+							(*it_Enemy).second->DreaseHp(attackPoint);
+							_dice->GetBulletList()[_index]->SetFire(false);
+							_dice->GetBulletList()[_index]->SetCollision(true);
+							//_dice->GetBulletList()[_index]->ResetPosition();
+							dice = _dice;
+						}
 						break;
 
 					}
 
-				}
-				
+				}	
 			}
+
 		}
 	}
 
 	// bullet
-
+	
 
 	//
 	if (dice != NULL)
 	{
+		if (dice->GetColor() == eDiceColor::DICE_YELLOW)
+		{
+			ChainDamage(_pData.first,dice);
+		}
 		EnemyDamage(_index, dice);
 	}
 	
@@ -200,109 +335,6 @@ void GameSystem::CollisionBullet(Dice* _dice, int _index, std::pair<int,POINT> _
 
 }
 
-void GameSystem::CollisionObject(std::list<Enemy*> _enemyList)
-{
-	//enemyList = _enemyList;
-
-	//if (!enemyList.empty())
-	//{
-	//	std::list<Enemy*>::iterator iter = enemyList.begin();
-	//	if (!(*iter)->GetActivate())
-	//	{
-	//		return;
-	//	}
-	//}
-	//
-
-	//if (!enemyList.empty())
-	//{
-	//	it_Enemy = enemyList.begin();
-	//	if (!g_DiceList.empty())
-	//	{
-	//		//test = new TimeCheck("Collison");
-	//		for (it_Dice = g_DiceList.begin(); it_Dice != g_DiceList.end(); it_Dice++)
-	//		{
-	//			for (size_t i = 0; i < (*it_Dice).second->GetBulletList().size(); i++)
-	//			{
-	//				if ((*it_Dice).second->GetBulletList()[i]->IsFire())
-	//				{
-	//					if (CollisionCircleAndCircle(7, (*it_Enemy)->GetPosX(), (*it_Enemy)->GetPosY(), 7,
-	//						(*it_Dice).second->GetBulletList()[i]->GetBulletCenterX(),
-	//						(*it_Dice).second->GetBulletList()[i]->GetBulletCenterY()))
-	//					{
-
-	//						(*it_Enemy)->SetStateAbnormalEffect((*it_Dice).second->GetStateAbnormalEffect());
-	//						attackPoint = (*it_Dice).second->GetAttackPoint();
-	//						DiceStateAdnormal((*it_Dice).second);
-
-	//						{
-	//							if ((*it_Dice).second->GetColor() != eDiceColor::DICE_RED)
-	//							{
-
-	//								(*it_Enemy)->DreaseHp(attackPoint);
-	//								(*it_Dice).second->GetBulletList()[i]->SetFire(false);
-	//								(*it_Dice).second->GetBulletList()[i]->SetCollision(true);
-	//								(*it_Dice).second->GetBulletList()[i]->ResetPosition();
-	//							}
-	//							else
-	//							{
-	//								//rc = (*it_Enemy)->GetEnemyRect();
-	//								ptSave = { (*it_Dice).second->GetBulletList()[i]->GetBulletCenterX(),
-	//											(*it_Dice).second->GetBulletList()[i]->GetBulletCenterY() };
-
-	//								(*it_Dice).second->GetBulletList()[i]->SetFire(false);
-	//								(*it_Dice).second->GetBulletList()[i]->SetCollision(true);
-	//								(*it_Dice).second->GetBulletList()[i]->ResetPosition();
-
-	//							}
-	//							break;
-	//						}
-
-	//					}
-	//				}
-
-	//			}
-	//		}
-	//	}
-	//}
-	//if (!enemyList.empty())
-	//{
-	//	for (it_Enemy = enemyList.begin(); it_Enemy != enemyList.end(); it_Enemy++)
-	//	{
-	//		rc = (*it_Enemy)->GetEnemyRect();
-	//		if (isFire)
-	//		{
-	//			if (CollisionCircleAndRect(GetCircleFireRadius(),
-	//				ptSave.x, ptSave.y, rc))
-	//			{
-	//				(*it_Enemy)->DreaseHp(attackPoint);
-	//			}
-	//		}
-	//	}
-	//}
-
-
-
-	//if (!enemyList.empty())
-	//{
-	//	for (it_Enemy = enemyList.begin(); it_Enemy != enemyList.end(); )
-	//	{
-	//		if ((*it_Enemy)->GetHp() == 0 || !(*it_Enemy)->IsLive())
-	//		{
-	//			SAFE_DELETE(*it_Enemy);
-	//			it_Enemy = enemyList.erase(it_Enemy);
-	//			
-	//		}
-	//		else
-	//		{
-	//			++it_Enemy;
-	//		}
-	//	}
-	//}
-
-	//
-
-}
 
 void GameSystem::BulletCollision()
 {
@@ -333,9 +365,6 @@ void GameSystem::AddEnemy(Enemy * _enemy, int index)
 
 int GameSystem::EnemyType()
 {
-	
-	
-	//iRound = iRound * iCount;
 	if (0 == (iRound % 10))
 	{
 		return 1;
@@ -358,16 +387,15 @@ std::pair<int, POINT> GameSystem::GetPosEnemy(Dice* dice)
 {
 	int iCount = 0;
 
-	if (enemyList.size()> 0)
+	if (!enemyList.empty())
 	{
-		//for (it_Enemy = enemyList.begin(); it_Enemy != enemyList.end(); it_Enemy++)
-		//{
-		//	if ((*it_Enemy).second->GetActivate())
-		//	{
-		//		iCount++;
-		//	}
-		//}
-		iCount = enemyList.size();
+		for (it_Enemy = enemyList.begin(); it_Enemy != enemyList.end(); it_Enemy++)
+		{
+			if ((*it_Enemy).second->GetActivate())
+			{
+				iCount++;
+			}
+		}
 	}
 
 	
@@ -397,7 +425,6 @@ std::pair<int, POINT> GameSystem::GetPosEnemy(Dice* dice)
 
 			if (iRand > (iSize / 4))
 			{
-				//iRand /= 4;
 				it_Target = std::next(it_Enemy, (iRand) );
 			}
 			else
@@ -405,7 +432,6 @@ std::pair<int, POINT> GameSystem::GetPosEnemy(Dice* dice)
 				it_Target = std::next(it_Enemy, (iRand));
 			}
 			
-			//rc = (*it_Target).second->GetEnemyRect();
 			pt.x = (*it_Target).second->GetPosX();
 			pt.y = (*it_Target).second->GetPosY();
 
@@ -417,24 +443,14 @@ std::pair<int, POINT> GameSystem::GetPosEnemy(Dice* dice)
 	}
 	
 
-	//for (it = enemyList.begin(); it != enemyList.end(); it++)
-	//{
-	//	rc = (*it)->GetEnemyRect();
-	//	break;
-	//}
-
 	return pData;
 }
 
 int GameSystem::GetEnemyHp()
 {
-
-	/*
-	일반몹 스테이지 별 채력  =  iRound * iCount ;
-	보스몹 스테이지 별 채력  =  iRound * iCount * iBossConstant;
-	*/
 	if (0 == (iRound % 10))
 	{
+		iCount++;
 		iEnemyHp = iRound * iCount * iBossConstant;
 	}
 	else
@@ -490,8 +506,7 @@ void GameSystem::AddDice()
 	
 	if (false == pSaveInfo[iDiceIndex].first)
 	{
-		//Dice* dice = new Dice();
-		diceColor = eDiceColor::DICE_YELLOW;
+		//diceColor = eDiceColor::DICE_BLUE;
 		Dice* dice = DiceRandomCreate(diceColor);
 
 		pSaveInfo[iDiceIndex].first = true;
@@ -517,85 +532,8 @@ void GameSystem::AddDice()
 	{
 	}
 
-	//std::list<std::pair<int, Dice*>>::iterator it;
-
-	//for(it = g_DiceList.begin(); it != g_DiceList.end(); it++)
-	//{
-	//	if (it->first == iDiceIndex)
-	//	{
-	//		(*it).second->SetColor(diceColor);
-	//		break;
-	//	}
-	//}
-	//
-
 	
 	
-}
-
-
-void GameSystem::RenderText(HDC hdc, const std::string fontName, const std::string strText, POINT* pos, COLORREF color)
-{
-	TCHAR szStr[256] = { 0, };
-	HFONT oldFont;
-
-	it_Font = fontMap.find(fontName);
-	if (it_Font != fontMap.end())
-	{
-		HFONT font = (HFONT)(it_Font->second);
-		oldFont = (HFONT)SelectObject(hdc, font);
-		COLORREF oldColor = SetTextColor(hdc, color);
-		
-		
-
-		TextOut(hdc, pos->x, pos->y, strText.c_str(), strText.size());
-
-		SelectObject(hdc, oldFont);
-		SetTextColor(hdc, oldColor);
-	}
-}
-
-void GameSystem::TextEnemyHpRender(HDC hdc, int iHp, RECT * rc, COLORREF color)
-{
-	SetBkMode(hdc, TRANSPARENT);
-
-	TCHAR szStr[256] = { 0, };
-	HFONT oldFont;
-
-	std::string fontName;
-	if (iHp >= 1000 && iHp < 100000)
-	{
-		fontName = TEXT("AdobeSS");
-
-	}
-	else if (iHp > 100 && iHp < 1000)
-	{
-		fontName = TEXT("AdobeS");
-
-	}
-	else
-	{
-		fontName = TEXT("AdobeB");
-	}
-
-	it_Font = fontMap.find(fontName);
-
-	if (it_Font != fontMap.end())
-	{
-		HFONT font = (HFONT)(it_Font->second);
-		oldFont = (HFONT)SelectObject(hdc, font);
-		COLORREF oldColor = SetTextColor(hdc, color);
-
-		TCHAR strHp[256];
-		_stprintf(strHp, TEXT("%d"), iHp);
-
-		//TextOut(hdc, pos->x, pos->y, strText.c_str(), strText.size());
-		DrawText(hdc, strHp, _tcslen(strHp), rc, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
-
-
-		SelectObject(hdc, oldFont);
-		SetTextColor(hdc, oldColor);
-	}
 }
 
 Dice* GameSystem::DiceRandomCreate(int _rand)
@@ -771,10 +709,10 @@ bool GameSystem::RandomDie()
 	//
 	for (size_t i = 0; i < GetProbabilitySize(); i++)
 	{
-if (iRand == randomList[i])
-{
-	return false;
-}
+		if (iRand == randomList[i])
+		{
+			return false;
+		}
 	}
 	return true;
 }
@@ -856,7 +794,7 @@ void GameSystem::EnemyProDuce()
 				enemyList.push_back(q_Enemy.front());
 				q_Enemy.pop();
 			}
-			fDeltaTime = 0.5f;
+			fDeltaTime = 1.f;
 		}
 
 	}
@@ -864,6 +802,7 @@ void GameSystem::EnemyProDuce()
 
 std::pair<int, POINT> GameSystem::TargetUpdate(std::pair<int, POINT> _target)
 {
+
 	for (it_Enemy = enemyList.begin(); it_Enemy != enemyList.end(); it_Enemy++)
 	{
 		if (!(*it_Enemy).second->GetActivate())
@@ -914,43 +853,178 @@ void GameSystem::EnemyDamage(int _index, Dice* _dice)
 					(*it_Enemy).second->DreaseHp(attackPoint);
 				}
 			}
-			else if(color == eDiceColor::DICE_YELLOW)
-			{
-				if (_dice->IsChain())
-				{
-					
-				}
-			}
+
 		}
 	}
 
-	if (!enemyList.empty())
-	{
-		for (it_Enemy = enemyList.begin(); it_Enemy != enemyList.end(); )
-		{
-			if (!(*it_Enemy).second->GetActivate())
-			{
-				break;
-			}
-
-			if ((*it_Enemy).second->GetHp() == 0 || !(*it_Enemy).second->IsLive())
-			{
-				SAFE_DELETE((*it_Enemy).second);
-				it_Enemy = enemyList.erase(it_Enemy);
-				_dice->SetTargeting(false);
-				_dice->GetBulletList()[_index]->SetFire(false);
-				_dice->GetBulletList()[_index]->SetCollision(true);
-				_dice->GetBulletList()[_index]->ResetPosition();
-			}
-			else
-			{
-				++it_Enemy;
-			}
-		}
-	}
 
 }
 
-void GameSystem::ChainRender(HDC hdc, BYTE _key)
+
+void GameSystem::ChainDamage(int _targetNumber, Dice* _dice)
 {
+	int iCount = 0;
+	std::list<std::pair<int, Enemy*>>::iterator iter = enemyList.begin();
+
+	if (!enemyList.empty())
+	{
+		for (; iter != enemyList.end(); iter++)
+		{
+			if (iter->first == _targetNumber)
+			{
+				break;
+			}
+		}
+		//chainCount = 6;
+		
+		int index = 0;
+		while (chainCount > 0)
+		{
+			chainList[index].pt.x = (*iter).second->GetPosX();
+			chainList[index].pt.y = (*iter).second->GetPosY();
+
+
+			(*iter).second->DreaseHp(attackPoint);
+			EFFECTMANAGER->Play(TEXT("ChainEffect"), chainList[index].pt.x, chainList[index].pt.y);
+
+			iter = std::next(iter, 1);
+
+			chainCount--;
+			index++;
+			if (iter == enemyList.end())  
+			{
+				break;
+			}
+		}
+		chainCount = 2;
+	}
+	//iCount;
+
+
+}
+
+void GameSystem::DiceEffect(eDiceColor _color, Dice* _dice, int _index)
+{
+	switch (_color)
+	{
+	case eDiceColor::DICE_BLACK:
+		EFFECTMANAGER->Play(TEXT("BlackBulletEffect"), _dice->GetBulletList()[_index]->GetBulletCenterX(), _dice->GetBulletList()[_index]->GetBulletCenterY());
+		break;
+	case eDiceColor::DICE_BLUE:
+		EFFECTMANAGER->Play(TEXT("BlueBulletEffect"), _dice->GetBulletList()[_index]->GetBulletCenterX(), _dice->GetBulletList()[_index]->GetBulletCenterY());
+		slowCount++;
+		break;
+	case eDiceColor::DICE_GRAY:
+		EFFECTMANAGER->Play(TEXT("GrayBulletEffect"), _dice->GetBulletList()[_index]->GetBulletCenterX(), _dice->GetBulletList()[_index]->GetBulletCenterY());
+		break;
+	case eDiceColor::DICE_GREEN:
+		EFFECTMANAGER->Play(TEXT("GreenBullectEffect"), _dice->GetBulletList()[_index]->GetBulletCenterX(), _dice->GetBulletList()[_index]->GetBulletCenterY());
+		poisonNumber = RAND->GetFromIntoTo(1, 3);
+		break;
+	case eDiceColor::DICE_RED:
+		EFFECTMANAGER->Play(TEXT("RedBulletEffect"), _dice->GetBulletList()[_index]->GetBulletCenterX(), _dice->GetBulletList()[_index]->GetBulletCenterY());
+		break;
+	case eDiceColor::DICE_YELLOW:
+		EFFECTMANAGER->Play(TEXT("YellowBulletEffect"), _dice->GetBulletList()[_index]->GetBulletCenterX(), _dice->GetBulletList()[_index]->GetBulletCenterY());
+
+		break;
+
+	}
+
+	SOUNDMANAGER->Play(TEXT("Sound"), 1.f);
+
+}
+
+void GameSystem::DiceEffect(eDiceColor _color, int x, int y)
+{
+	switch (_color)
+	{
+	case eDiceColor::DICE_BLACK:
+		EFFECTMANAGER->Play(TEXT("BlackBulletEffect"), x, y);
+		break;
+	case eDiceColor::DICE_BLUE:
+		EFFECTMANAGER->Play(TEXT("BlueBulletEffect"), x, y);
+		break;
+	case eDiceColor::DICE_GRAY:
+		EFFECTMANAGER->Play(TEXT("GrayBulletEffect"), x, y);
+		break;
+	case eDiceColor::DICE_GREEN:
+		EFFECTMANAGER->Play(TEXT("GreenBullectEffect"), x, y);
+		break;
+	case eDiceColor::DICE_RED:
+		EFFECTMANAGER->Play(TEXT("RedBulletEffect"), x, y);
+		break;
+	case eDiceColor::DICE_YELLOW:
+		EFFECTMANAGER->Play(TEXT("YellowBulletEffect"), x, y);
+		break;
+
+	}
+	SOUNDMANAGER->Play(TEXT("Sound"), 1.f);
+
+}
+
+void GameSystem::SetGoldSale(int _gold)
+{
+	iGold = iGold - _gold; 
+}
+
+bool GameSystem::GameActivate(Dice* _dice, int index)
+{
+	if (!enemyList.empty())
+	{
+		(it_Enemy) = enemyList.begin();
+
+		if (!(*it_Enemy).second->GetActivate())
+		{
+			for (it_Dice = g_DiceList.begin(); it_Dice != g_DiceList.end(); it_Dice++)
+			{
+				for (int i = 0; i < 6; i++)
+				{
+					(*it_Dice).second->GetBulletList()[i]->SetFire(false);
+					(*it_Dice).second->GetBulletList()[i]->ResetPosition();
+					(*it_Dice).second->SetTargeting(false);
+				}
+			}
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void GameSystem::IsSpeedUp()
+{
+	speedUp = 4;
+}
+
+void GameSystem::IsSpeedIDle()
+{
+	speedUp = 2;
+}
+
+void GameSystem::Reset()
+{
+	//Init();
+	iRound = 1;
+	std::vector<std::pair<bool, POINT>>::iterator iter;
+	for (iter = pSaveInfo.begin(); iter != pSaveInfo.end(); iter++)
+	{
+		(*iter).first = false;
+	}
+	g_DiceList.clear();
+	iBoardCount = 0;
+
+	DICEMANAGER->Reset();
+	//AddDice();
+
+}
+
+bool GameSystem::GetDiceFull()
+{
+	if (g_DiceList.size() >= 25)
+	{
+		return true;
+	}
+	return false;
 }

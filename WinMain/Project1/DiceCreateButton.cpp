@@ -15,7 +15,8 @@ DiceCreateButton::~DiceCreateButton()
 bool DiceCreateButton::Init()
 {
 	image = IMAGEMANAGER->FindImage(TEXT("GameDiceInitButton"));
-
+	iGold = 10;
+	ptGold = {297,648};
 	// left ,top
 	iStartX = 245;
 	iStartY = 580;
@@ -34,41 +35,53 @@ bool DiceCreateButton::Init()
 	return true;
 }
 
+void DiceCreateButton::Release()
+{
+	//SAFE_DELETE(image);
+}
+
 void DiceCreateButton::Update()
 {
 	GetCursorPos(&_ptMouse);
 	ScreenToClient(_hWnd, &_ptMouse);
 
-	
-	
-	if (PtInRect(&rc, _ptMouse))
+	if (iGold <= GAMESYS->GetGold())
 	{
-		
-		if (KEYMANAGER->IsOnceKeyDown(VK_LBUTTON))
+		if (PtInRect(&rc, _ptMouse))
 		{
-			buttomType = DCBUTTONDIR_DOWN;
-			image->SetFrameX(1);
-		}
 
-		if (KEYMANAGER->IsOnceKeyUp(VK_LBUTTON) && buttomType == DCBUTTONDIR_DOWN)
+			if (KEYMANAGER->IsOnceKeyDown(VK_LBUTTON))
+			{
+				buttomType = DCBUTTONDIR_DOWN;
+				image->SetFrameX(1);
+			}
+
+			if (KEYMANAGER->IsOnceKeyUp(VK_LBUTTON) && buttomType == DCBUTTONDIR_DOWN)
+			{
+				buttomType = DCBUTTONDIR_UP;
+				image->SetFrameX(0);
+				if (!GAMESYS->GetDiceFull())
+				{
+					GAMESYS->SetGoldSale(iGold);
+				}
+				iGold += 10;
+				GAMESYS->AddDice();
+
+			}
+
+		}
+		else
 		{
-			buttomType = DCBUTTONDIR_UP;
+			buttomType = DCBUTTONDIR_NONE;
 			image->SetFrameX(0);
-			GAMESYS->AddDice();
-
 		}
-
-
-		
-		
 	}
 	else
 	{
-		buttomType = DCBUTTONDIR_NONE;
-		image->SetFrameX(0);
-
+		image->SetFrameX(1);
 	}
-
+	
+	
 	
 
 }
@@ -76,4 +89,12 @@ void DiceCreateButton::Update()
 void DiceCreateButton::Render(HDC hdc)
 {
 	image->FrameRender(hdc, rc.left, rc.top);
+
+	{
+		TCHAR str[256] = { 0, };
+		//iGold = DICEMANAGER->GetYellowDicePrice();
+		_stprintf(str, TEXT("%d"), iGold);
+
+		FONTMANAGER->RenderText(hdc, TEXT("AdobeSS"), str, &ptGold, RGB(0, 0, 0));
+	}
 }

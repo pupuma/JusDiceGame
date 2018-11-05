@@ -12,6 +12,8 @@ public:
 	~GreenDice();
 public:
 	bool Init(int _x, int _y, RECT _rcGameBoard);
+	void Update();
+
 public:
 	void DiceAbility();
 };

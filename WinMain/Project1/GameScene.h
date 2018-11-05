@@ -3,25 +3,24 @@
 class GameBoard;
 class Enemy;
 class DiceCreateButton;
-
-enum eGameType
-{
-	GMAE_IDLE,
-	GMAE_PLAY,
-	GAME_STOP,
-};
+class GameStateButton;
+class DiceFuctionUI;
 
 class GameScene
 	: public GameNode
 {
 private:
+	eGState state;
+private:
+	
 	GameBoard* gameBoard;
 	Enemy* enemy;
 	DiceCreateButton* dcButtom;
+	GameStateButton* gsButtom;
+	DiceFuctionUI* diceUI;
 
 	std::list<std::pair<int, Enemy*>> enemyList;
 	std::list<std::pair<int, Enemy*>>::iterator it;
-	eGameType _type;
 private:
 	POINT ptGameLine1;
 	POINT ptGameLine2;
@@ -30,9 +29,13 @@ private:
 
 private:
 	Image* backGroundImg;
+	Image* stopImgBack;
+
 	RECT testRect;
 	RECT testRect2;
-
+	POINT ptRound;
+	POINT ptRound2;
+	POINT ptGold;
 private:
 	int iStartX;
 	int iStartY;
@@ -43,6 +46,8 @@ private:
 	float fDeltaTime;
 	int iCount;
 	int iRound;
+	int iEnemyCount;
+	int iGold;
 public:
 	GameScene();
 	~GameScene();
@@ -51,6 +56,7 @@ public:
 	void Release();
 	void Update();
 	void Render(HDC hdc);
+public:
+	void DrawFont(HDC hdc);
 };
 
-static DWORD CALLBACK ThreadFunction(LPVOID lpParam);

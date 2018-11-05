@@ -3,11 +3,12 @@ class Bullet
 {
 private:
 #if defined(_DEBUG_TEST)
-	POINT pt;
-	POINT ptSave;
+	
 
 #endif//
 private:
+	POINT pt;
+	POINT ptSave;
 private:
 	bool isLive;
 	bool isFire;

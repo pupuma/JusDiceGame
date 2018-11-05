@@ -59,10 +59,11 @@ public:
 public:
 	bool Init();
 	bool Init(int _width, int _height);
+	void Release();
 	void Update();
 	void Render(HDC hdc);
 public:
-	void RedRender(HDC hdc);
+	void FullAttactRender(HDC hdc);
 public:
 	RECT GetRectGameBoard() { return rcGameBoard; }
 };

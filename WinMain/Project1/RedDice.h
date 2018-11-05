@@ -8,6 +8,7 @@ class RedDice
 private:
 	RECT rcCircleFire;
 	Image* circleImg;
+	Image* bulletRedImg;
 private:
 	int r;
 	float fDeltaTime;
@@ -21,6 +22,7 @@ public:
 	~RedDice();
 public:
 	bool Init(int _x, int _y, RECT _rcGameBoard);
+	void Release();
 	void Update();
 	void Render(HDC hdc);
 public:

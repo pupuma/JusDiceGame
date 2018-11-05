@@ -52,5 +52,7 @@
 #include "GameSystem.h"
 #include "StateManager.h"
 #include "TimeCheck.h"
+#include "FontManager.h"
+#include "DiceManager.h"
 
 

@@ -4,17 +4,19 @@
 
 #include "Enemy.h"
 #include "DiceCreateButton.h"
+#include "GameStateButton.h"
+#include "DiceFuctionUI.h"
 
 GameScene::GameScene()
 {
 	iEnemyStartX = 0;
 	iEnemyStartY = 0;
 
-	_type = eGameType::GMAE_IDLE;
 	fDeltaTime = 1.5f;
 	iCount = 0;
 	iRound = 1;
-	
+	iEnemyCount = 0;
+	iGold = 0;
 }
 
 
@@ -27,12 +29,12 @@ bool GameScene::Init()
 	// 게임 배경 이미지 
 	backGroundImg = IMAGEMANAGER->AddImage(TEXT("StartBack1"), TEXT("../../Resource/BMP/GameScene.bmp"), WINSIZEX, WINSIZEY, false, COLOR_M);
 	
+	state = GAMESTATE_IDLE;
+	GAMESYS->SetGameState(state);
 	//---------Test
 	iStartX = 113;
 	iStartY = 207;
 
-	//testRect = RectMake(113, 207, 73, 60);
-	//testRect2 = RectMake(113, 207, 73, 60);
 	testRect2 = RectMakeCenter(150, 237, 73, 60);
 	testRect = RectMakeCenter(59, 60, 54, 44);
 	// Game Line Init 
@@ -62,60 +64,67 @@ bool GameScene::Init()
 		}
 
 	}
-	// Game Enemy
-	{
-		//int currentY = -300;
-		//int iEnemyCount = GAMESYS->GetRound();
-		//for (int i = 0; i <25; i++)
-		//{
-		//	Enemy* enemy = new Enemy();
-		//	enemy->Init(currentY);
-		//	currentY -= (10 + enemy->GetHeight());
-		//	enemyList.push_back(enemy);
-		//}
-
-	}
-	
-
-	{
-		//GAMESYS->SetRound(3);
-
-		//GAMESYS->SetEnemyList(enemyList);
-	}
 
 	// Dice Create Button
 	{
 		dcButtom = new DiceCreateButton();
 		dcButtom->Init();
+
+		gsButtom = new GameStateButton();
+		gsButtom->Init();
+
+		diceUI = new DiceFuctionUI();
+		diceUI->Init();
 	}
 
+	{
+		ptRound = { 240,120 };
+		ptRound2 = { 270,120 };
+		ptGold = { 92,618 };
+	}
+
+	GAMESYS->AddDice();
+
+	stopImgBack= IMAGEMANAGER->FindImage("gray");
 	return true;
 }
 
 void GameScene::Release()
 {
+	gsButtom->Release();
+	dcButtom->Release();
+	diceUI->Release();
+
+	delete gsButtom;
+	delete dcButtom;
+	delete diceUI;
+	delete gameBoard;
+
 }
 
 void GameScene::Update()
 {
 	{
-		dcButtom->Update();
+		state = GAMESYS->GetGameState();
+		gsButtom->Update();
+
 	}
+	if (state != GAMESTATE_DIE)
+	{
+		//
+		dcButtom->Update();
+		diceUI->Update();
+	}
+
+	
 
 	if (KEYMANAGER->IsOnceKeyDown(VK_F1))
 	{
-		_type = eGameType::GMAE_PLAY;
-		CreateThread(
-			NULL,
-			0,
-			ThreadFunction,
-			this, NULL,
-			0
-		);
+		GAMESYS->SetGold(10000);
 
 	}
 
-	if (_type == eGameType::GMAE_IDLE)
+	if (state == GAMESTATE_IDLE)
 	{
 		//_type = eGameType::GMAE_PLAY;
 
@@ -126,7 +135,8 @@ void GameScene::Update()
 
 		gameBoard->Update();
 	}
-	else if (_type == eGameType::GMAE_PLAY)
+	
+	if (state == GAMESTATE_START)
 	{
 
 		gameBoard->Update();
@@ -135,121 +145,120 @@ void GameScene::Update()
 			GAMESYS->EnemyProDuce();
 			GAMESYS->EnemyUpdate();
 
-			//===================================
-
-			//TimeCheck* test = new TimeCheck(TEXT("GameBoard"));
-
-			//SAFE_DELETE(test);
-
-			//GAMESYS->CollisionEnemy(enemyList);
-
-			{
-				//TimeCheck test(TEXT("EnemyList"));
-
-				//for (it = enemyList.begin(); it != enemyList.end(); it++)
-				//{
-				//	(*it)->Update();
-
-				//}
-			}
-
-
-			//GAMESYS->CollisionObject(GAMESYS->GetEnemyList());
-
-			//{
-			//	TimeCheck test(TEXT("Collisoin"));
-
-			//	GAMESYS->CollisionObject(enemyList);
-			//}
-
 		}
 	}
-	else
+	
+	if (state == GAMESTATE_DIE)
 	{
-		//GAMESYS->SetEnemyList(enemyList);
-		//gameBoard->Update();
+		gameBoard->Release();
+		GAMESYS->Release();
+		//Release();
+		GAMESYS->SetGameState(GAMESTATE_IDLE);
+		GAMESYS->SetFirstStart(true);
+		SCENEMANAGER->ChangeScene(TEXT("Start"));
+		return;
+	}
 
+	if (state == GAMESTATE_STOP)
+	{
+
+	}
+
+	{
+		EFFECTMANAGER->Update();
+
+		GAMESYS->Update();
 	}
 }
 
 void GameScene::Render(HDC hdc)
 {
-	{
-		backGroundImg->Render(hdc);
-		//DrawObject(hdc, testRect, 1, RGB(255, 125, 125), RECTANGLE);
-		//DrawObject(hdc, testRect2, 1, RGB(255, 125, 125), RECTANGLE);
-
-	}
 	
-	// Draw Game Line 
 	{
-		DrawLine(hdc, ptGameLine1, ptGameLine2, 2, RGB(0, 0, 0));
-		DrawLine(hdc, ptGameLine2, ptGameLine3, 2, RGB(0, 0, 0));
-		DrawLine(hdc, ptGameLine3, ptGameLine4, 2, RGB(0, 0, 0));
-
-	}
-
-	
-	
-	// Enemy
-	{
-
 		{
-			gameBoard->RedRender(hdc);
+			backGroundImg->Render(hdc);
 		}
 
+		// Draw Game Line 
 		{
-			GAMESYS->EnemyListRender(hdc);
+			DrawLine(hdc, ptGameLine1, ptGameLine2, 2, RGB(0, 0, 0));
+			DrawLine(hdc, ptGameLine2, ptGameLine3, 2, RGB(0, 0, 0));
+			DrawLine(hdc, ptGameLine3, ptGameLine4, 2, RGB(0, 0, 0));
+
 		}
 
 
 
-		//{
-		//	for (it = enemyList.begin(); it != enemyList.end(); it++)
-		//	{
-		//		if ((*it)->GetActivate())
-		//		{
-		//			(*it)->Render(hdc);
-		//		}
-		//	}
-		//}
+		// Enemy
+		{
+
+			{
+				gameBoard->FullAttactRender(hdc);
+			}
+
+			{
+				GAMESYS->EnemyListRender(hdc);
+			}
+
+		}
+
+		{
+			EFFECTMANAGER->Render(hdc);
+
+			gameBoard->Render(hdc);
+		}
+
+		// Dice Create Buttom Draw
 		
-		//DrawObject(hdc, testRect, 1, RGB(234, 57, 67), ROUNDRECT, 20, 20);
-
+		{
+			DrawFont(hdc);
+		}
 	}
 	
+	if (state == GAMESTATE_STOP)
 	{
-		gameBoard->Render(hdc);
+		stopImgBack->AlphaRender(hdc,50);
+
+		{
+			TCHAR str[256] = { 0, };
+			_stprintf(str, TEXT("P A U S E"));
+			POINT pt = { 250 , 300 };
+			FONTMANAGER->RenderText(hdc, TEXT("AdobeBB"), str, &pt, RGB(255, 255, 255));
+		}
 	}
 
-	// Dice Create Buttom Draw
 	{
 		dcButtom->Render(hdc);
+		gsButtom->Render(hdc);
+		diceUI->Render(hdc);
 	}
-	
-	// 도형 그리기 
-	//RoundRect(hdc, testRect.left, testRect.top, testRect.right, testRect.bottom, 30, 30);
+
 }
 
-
-
-DWORD CALLBACK ThreadFunction(LPVOID lpParam)
+void GameScene::DrawFont(HDC hdc)
 {
-	int currentY = -50;
-	int iEnemyCount = GAMESYS->GetRound();
-	{
-		TimeCheck test(TEXT("GameSystem"));
 
-		for (int i = 0; i < 5000; i++)
-		{
-			Enemy* enemy = new Enemy();
-			enemy->Init(currentY);
-			currentY -= (10 + enemy->GetHeight());
-			//enemyList.push_back(enemy);
-			GAMESYS->AddEnemy(enemy,i);
-		}
+	{
+		TCHAR str[256] = { 0, };
+		iGold = GAMESYS->GetGold();
+		_stprintf(str, TEXT("%d"), iGold);
+		
+		FONTMANAGER->RenderText(hdc, TEXT("AdobeB"), str, &ptGold, RGB(0, 0, 0));
 	}
 
-	return 0;
+	if (state == GAMESTATE_IDLE)
+	{
+		TCHAR str[256] = { 0, };
+		_stprintf(str, TEXT("Wav %d"), iRound);
+		FONTMANAGER->RenderText(hdc, TEXT("AdobeBB"), str, &ptRound, RGB(0, 0, 0));
+	}
+	else if (state == GAMESTATE_START || state == GAMESTATE_STOP)
+	{
+		TCHAR str[256] = { 0, };
+		iEnemyCount = GAMESYS->GetEnemyCount();
+		_stprintf(str, TEXT("%d / %d"), iEnemyCount,iRound);
+		FONTMANAGER->RenderText(hdc, TEXT("AdobeBB"), str, &ptRound2, RGB(0, 0, 0));
+	}
+	//FONTMANAGER->RenderText(hdc, TEXT("AdobeBB"), TEXT("Start"), &ptRound, RGB(0, 0, 0));
 }
 

@@ -15,5 +15,7 @@ public:
 	void Update();
 public:
 	void DiceAbility();
+	
+
 };
 
